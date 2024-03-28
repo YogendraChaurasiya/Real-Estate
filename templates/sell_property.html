@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sell Your Property</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="#properties">Properties</a></li>
+                <li><a href="#testimonials">Testimonials</a></li>
+                <li><a href="#contact">Contact</a></li>
+                {% if 'user_id' in session %}
+                <li><a href="/logout">Logout</a></li>
+                {% else %}
+                <li><a href="/login">Login</a></li>
+                {% endif %}
+                <li><a href="/sell_property">Sell Your Property</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="sell-property">
+            <h2>Sell Your Property</h2>
+            <form id="property-form" action="/list_property" method="POST" enctype="multipart/form-data">
+                <label for="owner_name">Owner Name:</label>
+                <input type="text" id="owner_name" name="owner_name" required><br><br>
+
+                <div id="image-inputs">
+                    <!-- Initial image input field -->
+                    <label for="property_images">Property Images:</label>
+                    <input type="file" class="property-images" name="property_images[]" accept="image/*" required><br><br>
+                </div>
+
+                <button type="button" id="add-image-input">Add More Images</button><br><br>
+
+                <label for="address">Address:</label>
+                <input type="text" id="address" name="address" required><br><br>
+
+                <label for="property_size">Property Size:</label>
+                <input type="text" id="property_size" name="property_size" required><br><br>
+
+                <label for="property_type">Property Type:</label>
+                <select id="property_type" name="property_type" required>
+                    <option value="1 BHK">1 BHK</option>
+                    <option value="2 BHK">2 BHK</option>
+                    <option value="Villa">Villa</option>
+                    <option value="Flat">Flat</option>
+                    <!-- Add other property types as needed -->
+                </select><br><br>
+
+                <label for="price">Price:</label>
+                <input type="text" id="price" name="price" required><br><br>
+
+                <input type="submit" value="List Property">
+            </form>
+        </section>
+    </main>
+
+    <script>
+        document.getElementById('add-image-input').addEventListener('click', function() {
+            var imageInputs = document.querySelectorAll('.property-images');
+            if (imageInputs.length < 8) {
+                var newInput = document.createElement('input');
+                newInput.type = 'file';
+                newInput.classList.add('property-images');
+                newInput.name = 'property_images[]';
+                newInput.accept = 'image/*';
+                newInput.required = true;
+                
+                var label = document.createElement('label');
+                label.textContent = 'Property Image:';
+                
+                var br = document.createElement('br');
+                
+                document.getElementById('image-inputs').appendChild(label);
+                document.getElementById('image-inputs').appendChild(newInput);
+                document.getElementById('image-inputs').appendChild(br);
+            } else {
+                alert('You can add up to 8 images.');
+            }
+        });
+    </script>
+</body>
+</html>

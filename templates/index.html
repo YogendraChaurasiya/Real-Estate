@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate Management</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="#properties">Properties</a></li>
+                <li><a href="#testimonials">Testimonials</a></li>
+                <li><a href="#contact">Contact</a></li>
+                {% if 'user_id' in session %}
+                <li><a href="/logout">Logout</a></li>
+                {% else %}
+                <li><a href="/login">Login</a></li>
+                {% endif %}
+                <li><a href="/sell_property">Sell Your Property</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="properties">
+            <h2>Properties</h2>
+            <ul>
+                {% for property in properties %}
+                <li>
+                    <h3>{{ property.owner_name }}</h3>
+                    {% for image in property.property_images.split('|') %}
+                    <img src="{{ image }}" alt="Property Image">
+                    {% endfor %}
+                    <p>{{ property.address }}</p>
+                    <p>{{ property.property_size }} - {{ property.property_type }}</p>
+                    <p>Price: {{ property.price }}</p>
+                    <a href="/property/{{ property.id }}">View Details</a>
+                </li>
+                {% endfor %}
+            </ul>            
+        </section>
+        <!-- Other sections like Testimonials and Contact -->
+    </main>
+</body>
+</html>

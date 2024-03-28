@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Details</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="#properties">Properties</a></li>
+                <li><a href="#testimonials">Testimonials</a></li>
+                <li><a href="#contact">Contact</a></li>
+                {% if 'user_id' in session %}
+                <li><a href="/logout">Logout</a></li>
+                {% else %}
+                <li><a href="/login">Login</a></li>
+                {% endif %}
+                <li><a href="/sell_property">Sell Your Property</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="property-details">
+            <h2>Property Details</h2>
+            <h3>{{ property.owner_name }}</h3>
+            <img src="{{ property.property_images }}" alt="Property Image">
+            <p>Address: {{ property.address }}</p>
+            <p>Property Size: {{ property.property_size }}</p>
+            <p>Property Type: {{ property.property_type }}</p>
+            <p>Price: {{ property.price }}</p>
+            <!-- Add button for booking appointment -->
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Appointment</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='appointment_css.css') }}">
+</head>
+<body>
+    <h1>Add Appointment</h1>
+    <form action="{{ url_for('appointment') }}" method="post">
+        <label for="appointment_date">Appointment Date:</label>
+        <input type="date" id="appointment_date" name="appointment_date" required><br>
+        <label for="appointment_time">Appointment Time:</label>
+        <input type="time" id="appointment_time" name="appointment_time" required><br>
+        <label for="client_name">Client Name:</label>
+        <input type="text" id="client_name" name="client_name" required><br>
+        <label for="client_id">Client ID:</label>
+        <input type="text" id="client_id" name="client_id" required><br>
+        <label for="property_id">Property ID:</label>
+        <input type="text" id="owner_id" name="owner_id" required><br>
+        <label for="owner_id">Owner ID:</label>
+        <input type="text" id="property_id" name="property_id" required><br>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

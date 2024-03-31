@@ -1,3 +1,4 @@
+<!-- sell_property.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,9 +17,9 @@
                 {% if 'user_id' in session %}
                 <li><a href="/logout">Logout</a></li>
                 {% else %}
-                <li><a href="/login">Login</a></li>
+                <li><a href="/client_login">Login</a></li>
                 {% endif %}
-                <li><a href="/sell_property">Sell Your Property</a></li>
+                <li><a href="/owner_login">Sell Your Property</a></li>
             </ul>
         </nav>
     </header>
@@ -26,8 +27,6 @@
         <section id="sell-property">
             <h2>Sell Your Property</h2>
             <form id="property-form" action="/list_property" method="POST" enctype="multipart/form-data">
-                <label for="owner_name">Owner Name:</label>
-                <input type="text" id="owner_name" name="owner_name" required><br><br>
 
                 <div id="image-inputs">
                     <!-- Initial image input field -->

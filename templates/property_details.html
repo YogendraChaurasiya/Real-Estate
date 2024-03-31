@@ -1,3 +1,4 @@
+<!-- property_details.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,7 +17,7 @@
                 {% if 'user_id' in session %}
                 <li><a href="/logout">Logout</a></li>
                 {% else %}
-                <li><a href="/login">Login</a></li>
+                <li><a href="/client_login">Login</a></li>
                 {% endif %}
                 <li><a href="/sell_property">Sell Your Property</a></li>
             </ul>
@@ -32,9 +33,17 @@
             <p>Property Type: {{ property.property_type }}</p>
             <p>Price: {{ property.price }}</p>
             <!-- Add button for booking appointment -->
-            <button><a href="{{ url_for('appointment') }}">Book Appointment</a></button>
-
+            <form method="POST" action="/schedule_appointment?id={{ property.id }}&owner_name={{ property.owner_name }}">
+                <label for="appointment_date">Appointment Date:</label>
+                <input type="date" id="appointment_date" name="appointment_date" required><br><br>
+                
+                <label for="appointment_time">Appointment Time:</label>
+                <input type="time" id="appointment_time" name="appointment_time" required><br><br>
+                
+                <input type="submit" value="Schedule Appointment">
+            </form>
         </section>
+        
     </main>
 </body>
 </html>

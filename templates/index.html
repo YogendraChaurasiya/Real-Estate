@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,14 +14,12 @@
                 <li><a href="#properties">Properties</a></li>
                 <li><a href="#testimonials">Testimonials</a></li>
                 <li><a href="#contact">Contact</a></li>
-                <li><a href="client_signup">client signup</a></li>
-                <li><a href="client_login">client login</a></li>
                 {% if 'user_id' in session %}
                 <li><a href="/logout">Logout</a></li>
                 {% else %}
-                <li><a href="/login">Owner Login</a></li>
+                <li><a href="/client_login">Login</a></li>
                 {% endif %}
-                <li><a href="/sell_property">Sell Your Property</a></li>
+                <li><a href="/owner_login">Sell Your Property</a></li>
             </ul>
         </nav>
     </header>
@@ -31,8 +30,8 @@
                 {% for property in properties %}
                 <li>
                     <h3>{{ property.owner_name }}</h3>
-                    {% for image in property.property_images.split('|') %}
-                    <img src="{{ image }}" alt="Property Image">
+                    {% for image in property.images %}
+                        <img src="{{ image.image_path }}" alt="Property Image">
                     {% endfor %}
                     <p>{{ property.address }}</p>
                     <p>{{ property.property_size }} - {{ property.property_type }}</p>

@@ -1,24 +1,24 @@
-<!-- client_signup.html -->
+<!-- owner_signup.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Client Sign Up</title>
+    <title>Owner Sign Up</title>
 </head>
 <body>
-    <h2>Client Sign Up</h2>
-    <form method="POST" action="{{ url_for('client_signup') }}" enctype="multipart/form-data">
-        <label for="name">Name:</label><br>
-        <input type="text" id="name" name="name" required><br><br>
+    <h2>Owner Sign Up</h2>
+    <form method="POST" action="{{ url_for('owner_signup') }}" enctype="multipart/form-data">
+        <label for="owner_name">Owner Name:</label><br>
+        <input type="text" id="owner_name" name="owner_name" required><br><br>
         <label for="email">Email:</label><br>
         <input type="email" id="email" name="email" pattern="[a-zA-Z0-9._%+-]+@gmail.com" title="Please enter a valid Gmail address" required><br><br>
         <label for="phone">Phone:</label><br>
         <input type="text" id="phone" name="phone" pattern="[6-9]{1}[0-9]{9}" maxlength="10" title="Please enter a valid 10-digit phone number starting with 6, 7, 8, or 9" required><br><br>
-        <label for="photo">Photo:</label><br>
-        <input type="file" id="photo" name="photo" accept="image/*" required><br><br>
+        <!-- <label for="photo">Photo:</label><br>
+        <input type="file" id="photo" name="photo" accept="image/*" required><br><br> -->
         <input type="submit" value="Sign Up">
     </form>
-    <p>Already have an account? <a href="{{ url_for('client_login') }}">Login here</a></p>
+    <p>Already have an account? <a href="{{ url_for('owner_login') }}">Login here</a></p>
 </body>
 </html>

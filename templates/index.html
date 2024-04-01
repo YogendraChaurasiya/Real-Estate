@@ -3,6 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index_css.css') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Real Estate Management</title>
 </head>
@@ -29,19 +30,20 @@
             <ul>
                 {% for property in properties %}
                 <li>
-                    <h3>{{ property.owner_name }}</h3>
+                    <h3><b>{{ property.owner_name }}</b></h3>
                     {% for image in property.images %}
                         <img src="{{ image.image_path }}" alt="Property Image">
                     {% endfor %}
-                    <p>{{ property.address }}</p>
-                    <p>{{ property.property_size }} - {{ property.property_type }}</p>
-                    <p>Price: {{ property.price }}</p>
-                    <a href="/property/{{ property.id }}">View Details</a>
+                    <p><b>{{ property.address }}</b></p>
+                    <p><b>{{ property.property_size }} - {{ property.property_type }}</b></p>
+                    <p><b>Price: {{ property.price }}</b></p>
+                    <button ><a href="/property/{{ property.id }}">View Details</a></button>
                 </li>
                 {% endfor %}
             </ul>            
         </section>
         <!-- Other sections like Testimonials and Contact -->
+        {% include 'footer.html' %}
     </main>
 </body>
 </html>

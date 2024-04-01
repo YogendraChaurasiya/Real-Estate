@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for , session  
 from flask_sqlalchemy import SQLAlchemy
 import os
 import secrets
@@ -7,6 +7,7 @@ from werkzeug.utils import secure_filename
 from datetime import datetime
 from datetime import time
 from flask_mail import Mail, Message
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///real_estate.db'
@@ -55,7 +56,7 @@ class PropertyImage(db.Model):
     
 class Appointment(db.Model):
     id = db.Column(db.String(6), primary_key=True, default=lambda: ''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(6)))
-    client_id = db.Column(db.String(6), nullable=False)
+    client_id = db.Column(db.String(6),nullable=False)
     client_name = db.Column(db.String(100), nullable=False)
     client_email = db.Column(db.String(100), nullable=False)
     client_phone = db.Column(db.String(10), nullable=False)
@@ -64,6 +65,12 @@ class Appointment(db.Model):
     property_id = db.Column(db.Integer, db.ForeignKey('property.id'), nullable=False)
     property_address = db.Column(db.String(200), nullable=False)
     owner_name = db.Column(db.String(100), nullable=False)
+
+class PropertyBooked(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    pid = db.Column(db.Integer, db.ForeignKey('property.id'), nullable=False)
+    cid = db.Column(db.String(6), db.ForeignKey('client.id'), nullable=False)
+    booked_date = db.Column(db.Date, nullable=False)
     
 # Define routes
 @app.route('/')
@@ -223,8 +230,8 @@ def logout():
 
 @app.route('/sell_property', methods=['GET', 'POST'])
 def sell_property():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))  # Redirect to login page if user is not logged in
+    if 'owner_id' not in session:
+        return redirect(url_for('owner_login'))  # Redirect to login page if user is not logged in
     
     if request.method == 'POST':
         # Handle property listing form submission
@@ -302,6 +309,35 @@ def schedule_appointment():
         else:
             return "Client not found!"
     return render_template('property_details.html')
+
+
+
+
+@app.route('/book_property', methods=['GET', 'POST'])
+def book_property():
+    if request.method == 'POST':
+        pid = request.args.get('pid')
+        cid = session.get('user_id')  # Assuming the user is logged in and session contains user_id
+        booked_date_str = request.form.get('booked_date')
+        
+        # Convert the string representation of the date to a Python date object
+        booked_date = datetime.strptime(booked_date_str, '%Y-%m-%d').date()
+
+        # Create a new PropertyBooked instance
+        new_booking = PropertyBooked(pid=pid, cid=cid, booked_date=booked_date)
+        db.session.add(new_booking)
+        db.session.commit()
+
+        # Redirect to home page after booking
+        return redirect(url_for('index'))
+
+    else:
+       pid = request.args.get('pid')
+       appointment_date = request.args.get('appointment_date')  # Get appointment date from query parameter
+    return render_template('book_property.html', pid=pid, appointment_date=appointment_date)
+
+    
+    
 
 
 if __name__ == '__main__':

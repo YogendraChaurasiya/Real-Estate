@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment</title>
+</head>
+<body>
+    <h1>Payment</h1>
+    <!-- Flash message container -->
+    <div id="flash-messages">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-info">
+                    {{ messages[0] }} 
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Payment form -->
+    <form id="payment-form" method="POST">
+        <input type="hidden" name="prop_id" value="{{ prop_id }}">
+        <button type="submit">Pay Now</button>
+   
+
+   
+
+</body>
+</html>

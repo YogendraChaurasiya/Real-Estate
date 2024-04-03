@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for , session  
+from flask import Flask, render_template, request, redirect, url_for , session , flash
 from flask_sqlalchemy import SQLAlchemy
 import os
 import secrets
@@ -7,6 +7,7 @@ from werkzeug.utils import secure_filename
 from datetime import datetime
 from datetime import time
 from flask_mail import Mail, Message
+import secrets
 
 
 app = Flask(__name__)
@@ -71,6 +72,16 @@ class PropertyBooked(db.Model):
     pid = db.Column(db.Integer, db.ForeignKey('property.id'), nullable=False)
     cid = db.Column(db.String(6), db.ForeignKey('client.id'), nullable=False)
     booked_date = db.Column(db.Date, nullable=False)
+
+
+class Transaction(db.Model):
+    transaction_id = db.Column(db.String(10), primary_key=True, default=lambda: ''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(10)))
+    prop_id = db.Column(db.Integer, db.ForeignKey('property.id'), nullable=False)
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    transaction_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+
     
 # Define routes
 @app.route('/')
@@ -315,6 +326,9 @@ def schedule_appointment():
 
 @app.route('/book_property', methods=['GET', 'POST'])
 def book_property():
+    if 'user_id' not in session:
+        return redirect(url_for('client_login'))  # Redirect to client login page if user is not logged in 
+
     if request.method == 'POST':
         pid = request.args.get('pid')
         cid = session.get('user_id')  # Assuming the user is logged in and session contains user_id
@@ -336,8 +350,38 @@ def book_property():
        appointment_date = request.args.get('appointment_date')  # Get appointment date from query parameter
     return render_template('book_property.html', pid=pid, appointment_date=appointment_date)
 
+
+
+@app.route('/down_payment', methods=['GET', 'POST'])
+def down_payment():
+    if 'user_id' not in session:
+        return redirect(url_for('client_login'))  # Redirect to client login page if user is not logged in
+
+    if request.method == 'POST':
+        
+        client_id = session.get('user_id')
+        prop_id = request.args.get('prop_id')
+        
+
+        # Check if the client has scheduled an appointment for the property
+        appointment_exists = Appointment.query.filter_by(client_id=client_id, property_id=prop_id).first()
+        if not appointment_exists:
+            # Client has not scheduled an appointment, redirect to property_details.html
+            flash("Please schedule an appointment before making a down payment. if already scheduled please ignore it")
+            return redirect(url_for('property_details', id=prop_id))
+
+        amount = 10000
+        
+        # Create a new Transaction instance
+        new_transaction = Transaction(prop_id=prop_id, client_id=client_id, amount=amount)
+        db.session.add(new_transaction)
+        db.session.commit()
+
+        return redirect(url_for('index'))
     
-    
+    return render_template('down_payment.html')
+
+ 
 
 
 if __name__ == '__main__':

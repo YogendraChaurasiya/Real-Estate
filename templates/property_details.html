@@ -43,7 +43,9 @@
                 <input type="submit" value="Schedule Appointment"><br><br>
 
             </form>
-            <button id="bookPropertyBtn"><a href="{{ url_for('book_property', pid=property.id) }}">Book This Property</a></button>
+            <button id="bookPropertyBtn"><a href="{{ url_for('book_property', pid=property.id) }}">Book This Property</a></button><br><br>
+            <button id="payamountBtn"><a href="{{ url_for('down_payment', prop_id=property.id) }}">Make Down Payment</a></button>
+            
         </section>
         
     </main>

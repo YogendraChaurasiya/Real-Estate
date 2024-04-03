@@ -28,8 +28,12 @@
 footer{
   margin-top: auto;  
   bottom: 0px;
-  width: 100%;
+  width: 102.5%;
   background: #111;
+  margin-bottom: -15px;
+  margin-left: -20px;
+    
+  
 }
 .main-content{
   display: flex;
@@ -43,10 +47,13 @@ footer{
   font-size: 1.125rem;
   font-weight: 600;
   text-transform: uppercase;
+  color:antiquewhite;
+  margin-left: 10px;
 }
 .box .content{
   margin: 20px 0 0 0;
   position: relative;
+  margin-left: 10px;
 }
 .box .content:before{
   position: absolute;
@@ -66,6 +73,8 @@ footer{
 }
 .left .content p{
   text-align: justify;
+  
+  
 }
 .left .content .social{
   margin: 20px 0 0 0;
@@ -95,6 +104,7 @@ footer{
   border-radius: 50%;
   transition: 0.3s;
   cursor: pointer;
+  
 }
 .center .content .fas:hover{
   background: #f12020;
@@ -111,6 +121,7 @@ footer{
   font-size: 1.0625rem;
   margin-bottom: 2px;
   color: #656565;
+  
 }
 .right form .msg{
   margin-top: 10px;
@@ -121,6 +132,7 @@ footer{
   background: #151515;
   padding-left: 10px;
   border: 1px solid #222222;
+  
 }
 .right form input:focus,
 .right form textarea:focus{
@@ -147,7 +159,7 @@ footer{
   background: #000;
 }
 .bottom center{
-  padding: 5px;
+  padding: 2px;
   font-size: 0.9375rem;
   background: #151515;
 }
@@ -182,4 +194,7 @@ body {
     margin: 0;
     padding: 0;
   }
+
+
+
   

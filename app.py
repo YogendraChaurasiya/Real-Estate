@@ -8,7 +8,7 @@ from datetime import datetime
 from datetime import time
 from flask_mail import Mail, Message
 import secrets
-
+from flask import jsonify
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///real_estate.db'
@@ -140,6 +140,20 @@ def list_property():
         else:
             return "Owner not found!"
     return render_template('index.html')
+
+@app.route('/search', methods=['POST'])
+def search_properties():
+    query = request.form.get('query')
+    # Search for properties that match the query
+    properties = Property.query.filter(
+        (Property.owner_name.ilike(f'%{query}%')) |
+        (Property.address.ilike(f'%{query}%')) |
+        (Property.property_type.ilike(f'%{query}%')) |
+        (Property.property_size.ilike(f'%{query}%')) |
+        (Property.price.ilike(f'%{query}%'))
+    ).all()
+    # Render a template with the search results
+    return render_template('property_list.html', properties=properties)
 
 # Add two different routes for client and owner signup
 @app.route('/client_signup', methods=['GET', 'POST'])
@@ -322,8 +336,6 @@ def schedule_appointment():
     return render_template('property_details.html')
 
 
-
-
 @app.route('/book_property', methods=['GET', 'POST'])
 def book_property():
     if 'user_id' not in session:
@@ -349,7 +361,6 @@ def book_property():
        pid = request.args.get('pid')
        appointment_date = request.args.get('appointment_date')  # Get appointment date from query parameter
     return render_template('book_property.html', pid=pid, appointment_date=appointment_date)
-
 
 
 @app.route('/down_payment', methods=['GET', 'POST'])
@@ -380,9 +391,6 @@ def down_payment():
         return redirect(url_for('index'))
     
     return render_template('down_payment.html')
-
- 
-
 
 if __name__ == '__main__':
     with app.app_context():

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% for property in properties %}
+<li>
+    <h3>{{ property.owner_name }}</h3>
+    {% for image in property.images %}
+        <img src="{{ image.image_path }}" alt="Property Image">
+    {% endfor %}
+    <p>{{ property.address }}</p>
+    <p>{{ property.property_size }} - {{ property.property_type }}</p>
+    <p>Price: {{ property.price }}</p>
+    <a href="/property/{{ property.id }}">View Details</a>
+</li>
+<!-- {% include 'footer.html' %} -->
+{% endfor %}
+</body>
+</html>

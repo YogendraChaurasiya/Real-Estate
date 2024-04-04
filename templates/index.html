@@ -27,7 +27,8 @@
     <main>
         <section id="properties">
             <h2>Properties</h2>
-            <ul>
+            <input type="text" id="search" placeholder="Search Properties">
+            <ul id="property-list">
                 {% for property in properties %}
                 <li>
                     <h3><b>{{ property.owner_name }}</b></h3>
@@ -43,7 +44,27 @@
             </ul>            
         </section>
         <!-- Other sections like Testimonials and Contact -->
-        {% include 'footer.html' %}
+        
+        <!-- {% include 'footer.html' %} -->
     </main>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#search').keyup(function() {
+                var query = $(this).val();
+                $.ajax({
+                    url: '/search',
+                    type: 'POST',
+                    data: {query: query},
+                    success: function(response) {
+                        $('#property-list').html(response);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

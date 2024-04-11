@@ -1,70 +1,150 @@
 <!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index_css.css') }}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='css/index_css.css') }}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Real Estate Management</title>
-</head>
-<body>
+  </head>
+  <body>
     <header>
-        <nav>
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="#properties">Properties</a></li>
-                <li><a href="#testimonials">Testimonials</a></li>
-                <li><a href="#contact">Contact</a></li>
-                {% if 'user_id' in session %}
-                <li><a href="/logout">Logout</a></li>
-                {% else %}
-                <li><a href="/client_login">Login</a></li>
-                {% endif %}
-                <li><a href="/owner_login">Sell Your Property</a></li>
-            </ul>
-        </nav>
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="#properties">Properties</a></li>
+          <li><a href="#testimonials">Testimonials</a></li>
+          <li><a href="#contact">Contact</a></li>
+          {% if 'user_id' in session %}
+          <li><a href="/logout">Logout</a></li>
+          {% else %}
+          <li><a href="/client_login">Login</a></li>
+          {% endif %}
+          <li><a href="/owner_login">Sell Your Property</a></li>
+        </ul>
+      </nav>
     </header>
     <main>
-        <section id="properties">
-            <h2>Properties</h2>
-            <input type="text" id="search" placeholder="Search Properties">
-            <ul id="property-list">
-                {% for property in properties %}
-                <li>
-                    <h3><b>{{ property.owner_name }}</b></h3>
-                    {% for image in property.images %}
-                        <img src="{{ image.image_path }}" alt="Property Image">
-                    {% endfor %}
-                    <p><b>{{ property.address }}</b></p>
-                    <p><b>{{ property.property_size }} - {{ property.property_type }}</b></p>
-                    <p><b>Price: {{ property.price }}</b></p>
-                    <button ><a href="/property/{{ property.id }}">View Details</a></button>
-                </li>
-                {% endfor %}
-            </ul>            
-        </section>
-        <!-- Other sections like Testimonials and Contact -->
-        
-        <!-- {% include 'footer.html' %} -->
+      <section id="properties">
+        <h2>Properties</h2>
+        <!-- Add filter options to your HTML template -->
+        <select name="property_type">
+          <option value="">Select Property Type</option>
+          <option value="1 BHK">1 BHK</option>
+          <option value="2 BHK">2 BHK</option>
+          <option value="Villa">Villa</option>
+          <option value="Flat">Flat</option>
+        </select>
+
+        <input type="number" name="property_size_min" placeholder="Min Size" />
+        <input type="number" name="property_size_max" placeholder="Max Size" />
+
+        <input type="number" name="price_min" placeholder="Min Price" />
+        <input type="number" name="price_max" placeholder="Max Price" />
+
+        <select name="address">
+          <option value="">Select Address</option>
+          <option value="New Delhi">New Delhi</option>
+          <option value="Mumbai">Mumbai</option>
+          <option value="Bengaluru">Bengaluru</option>
+          <option value="Hyderabad">Hyderabad</option>
+        </select>
+
+        <button id="applyFilters">Apply Filters</button>
+        <button id="clearFilters">Remove Filter</button><br /><br />
+        <input type="text" id="search" placeholder="Search Properties" />
+        <ul id="property-list">
+          {% for property in properties %}
+          <li>
+            <h3><b>{{ property.owner_name }}</b></h3>
+            <img src="{{ property.image1 }}" alt="Property Image 1" />
+            <img src="{{ property.image2 }}" alt="Property Image 2" />
+            <img src="{{ property.image3 }}" alt="Property Image 3" />
+            <img src="{{ property.image4 }}" alt="Property Image 4" />
+            <img src="{{ property.image5 }}" alt="Property Image 5" />
+            <img src="{{ property.image6 }}" alt="Property Image 6" />
+            <p><b>{{ property.address }}</b></p>
+            <p>
+              <b>{{ property.property_size }} - {{ property.property_type }}</b>
+            </p>
+            <p><b>Price: {{ property.price }}</b></p>
+            <button>
+              <a href="/property/{{ property.id }}">View Details</a>
+            </button>
+          </li>
+          {% endfor %}
+        </ul>
+      </section>
+      <!-- Other sections like Testimonials and Contact -->
+
+      <!-- {% include 'footer.html' %} -->
     </main>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $('#search').keyup(function() {
-                var query = $(this).val();
-                $.ajax({
-                    url: '/search',
-                    type: 'POST',
-                    data: {query: query},
-                    success: function(response) {
-                        $('#property-list').html(response);
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(error);
-                    }
-                });
-            });
+      $(document).ready(function () {
+        $("#applyFilters").click(function () {
+          var property_type = $('select[name="property_type"]').val();
+          var property_size_min = $('input[name="property_size_min"]').val();
+          var property_size_max = $('input[name="property_size_max"]').val();
+          var price_min = $('input[name="price_min"]').val();
+          var price_max = $('input[name="price_max"]').val();
+          var address = $('select[name="address"]').val();
+
+          $.ajax({
+            url: "/",
+            type: "GET",
+            data: {
+              property_type: property_type,
+              property_size_min: property_size_min,
+              property_size_max: property_size_max,
+              price_min: price_min,
+              price_max: price_max,
+              address: address,
+            },
+            success: function (response) {
+              $("#property-list").html(
+                $(response).find("#property-list").html()
+              );
+            },
+            error: function (xhr, status, error) {
+              console.error(error);
+            },
+          });
         });
+
+        $("#clearFilters").click(function () {
+          // Clear all filter inputs and reload properties without filters
+          $('select[name="property_type"]').val("");
+          $('input[name="property_size_min"]').val("");
+          $('input[name="property_size_max"]').val("");
+          $('input[name="price_min"]').val("");
+          $('input[name="price_max"]').val("");
+          $('select[name="address"]').val("");
+
+          // Trigger click event on applyFilters button to reload properties without filters
+          $("#applyFilters").click();
+        });
+      });
+
+      $(document).ready(function () {
+        $("#search").keyup(function () {
+          var query = $(this).val();
+          $.ajax({
+            url: "/search",
+            type: "POST",
+            data: { query: query },
+            success: function (response) {
+              $("#property-list").html(response);
+            },
+            error: function (xhr, status, error) {
+              console.error(error);
+            },
+          });
+        });
+      });
     </script>
-</body>
+  </body>
 </html>

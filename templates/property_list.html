@@ -6,18 +6,28 @@
     <title>Document</title>
 </head>
 <body>
-    {% for property in properties %}
-<li>
-    <h3>{{ property.owner_name }}</h3>
-    {% for image in property.images %}
-        <img src="{{ image.image_path }}" alt="Property Image">
-    {% endfor %}
-    <p>{{ property.address }}</p>
-    <p>{{ property.property_size }} - {{ property.property_type }}</p>
-    <p>Price: {{ property.price }}</p>
-    <a href="/property/{{ property.id }}">View Details</a>
-</li>
+    <ul id="property-list">
+        {% for property in properties %}
+          <li>
+            <h3><b>{{ property.owner_name }}</b></h3>
+            <img src="{{ property.image1 }}" alt="Property Image 1" />
+            <img src="{{ property.image2 }}" alt="Property Image 2" />
+            <img src="{{ property.image3 }}" alt="Property Image 3" />
+            <img src="{{ property.image4 }}" alt="Property Image 4" />
+            <img src="{{ property.image5 }}" alt="Property Image 5" />
+            <img src="{{ property.image6 }}" alt="Property Image 6" />
+            <p><b>{{ property.address }}</b></p>
+            <p>
+              <b>{{ property.property_size }} - {{ property.property_type }}</b>
+            </p>
+            <p><b>Price: {{ property.price }}</b></p>
+            <button>
+              <a href="/property/{{ property.id }}">View Details</a>
+            </button>
+          </li>
+          {% endfor %}
+    </ul>
+    
 <!-- {% include 'footer.html' %} -->
-{% endfor %}
 </body>
 </html>

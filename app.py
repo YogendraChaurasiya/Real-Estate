@@ -25,6 +25,7 @@ app.config['MAIL_USERNAME'] = 'yogendrachaurasiya30@gmail.com'
 app.config['MAIL_PASSWORD'] = 'oizzrkharzmoltmv'  
 
 mail = Mail(app)
+app.jinja_env.globals['getattr'] = getattr
 
 # Define models
 class Client(db.Model):
@@ -48,12 +49,12 @@ class Property(db.Model):
     property_size = db.Column(db.String(20), nullable=False)
     property_type = db.Column(db.String(50), nullable=False)
     price = db.Column(db.Float, nullable=False)
-    images = db.relationship('PropertyImage', backref='property', lazy=True)
-
-class PropertyImage(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    property_id = db.Column(db.Integer, db.ForeignKey('property.id'), nullable=False)
-    image_path = db.Column(db.String(200), nullable=False)
+    image1 = db.Column(db.String(200))
+    image2 = db.Column(db.String(200))
+    image3 = db.Column(db.String(200))
+    image4 = db.Column(db.String(200))
+    image5 = db.Column(db.String(200))
+    image6 = db.Column(db.String(200))
     
 class Appointment(db.Model):
     id = db.Column(db.String(6), primary_key=True, default=lambda: ''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(6)))
@@ -86,19 +87,40 @@ class Transaction(db.Model):
 # Define routes
 @app.route('/')
 def index():
-    properties = Property.query.all()
+    # Get filter parameters from the query string
+    property_type = request.args.get('property_type')
+    property_size_min = request.args.get('property_size_min')
+    property_size_max = request.args.get('property_size_max')
+    price_min = request.args.get('price_min')
+    price_max = request.args.get('price_max')
+    address = request.args.get('address')
+
+    # Filter properties based on the parameters
+    properties = Property.query
+
+    if property_type:
+        properties = properties.filter(Property.property_type == property_type)
+    if property_size_min and property_size_max:
+        properties = properties.filter(Property.property_size.between(property_size_min, property_size_max))
+    if price_min and price_max:
+        properties = properties.filter(Property.price.between(price_min, price_max))
+    if address:
+        properties = properties.filter(Property.address.ilike(f'%{address}%'))
+
+    properties = properties.all()
+
     return render_template('index.html', properties=properties)
+
 
 @app.route('/property/<int:id>')
 def property_details(id):
     property = Property.query.get_or_404(id)
     return render_template('property_details.html', property=property, id=id, owner_name=property.owner_name)
 
-# Update the 'list_property' route
 @app.route('/list_property', methods=['POST'])
 def list_property():
     if 'owner_id' not in session:
-        return redirect(url_for('owner_login'))  # Redirect to owner login page if owner is not logged in
+        return redirect(url_for('owner_login'))  
     
     if request.method == 'POST':
         owner_id = session['owner_id']
@@ -113,8 +135,8 @@ def list_property():
             property_images = []
 
             # Process file uploads
-            for i in range(1, 9):
-                file_key = 'property_images{}'.format(i)
+            for i in range(1, 7):
+                file_key = 'property_image{}'.format(i)
                 if file_key in request.files:
                     file = request.files[file_key]
                     if file.filename != '':
@@ -131,9 +153,8 @@ def list_property():
             db.session.commit()
 
             # Save property images to the database
-            for image_path in property_images:
-                new_image = PropertyImage(property_id=new_property.id, image_path=image_path)
-                db.session.add(new_image)
+            for i in range(len(property_images)):
+                setattr(new_property, f"image{i+1}", property_images[i])
             db.session.commit()
 
             return redirect(url_for('index'))
@@ -213,7 +234,7 @@ def owner_signup():
             # Store owner_id in session after successful signup
             session['owner_id'] = new_owner.id
             # Redirect to index page after successful signup
-            return redirect(url_for('index'))
+            return redirect(url_for('sell_property'))
     return render_template('owner_signup.html')
 
 # Add routes for client and owner login
@@ -328,12 +349,14 @@ def schedule_appointment():
                 }
                 send_owner_appointment_email(property_owner_email, owner_email_data)
                 
-                return redirect(url_for('index'))  # Redirect to home page after scheduling appointment
+                # Redirect to property details page after scheduling appointment
+                return redirect(url_for('property_details', id=property_id))
             else:
                 return "Property owner not found!"
         else:
             return "Client not found!"
     return render_template('property_details.html')
+
 
 
 @app.route('/book_property', methods=['GET', 'POST'])

@@ -1,0 +1,103 @@
+-- database: d:\Real-Estate\instance\real_estate.db
+
+-- Use the ▷ button in the top right corner to run the entire file.
+
+SELECT * FROM owner;
+SELECT Property.id, Property.address, Property.price, Owner.owner_name, Owner.email AS owner_email
+FROM Property
+JOIN Owner ON Property.owner_name = Owner.owner_name;
+
+SELECT Owner.owner_name, COUNT(Property.id) AS total_properties
+FROM Owner
+LEFT JOIN Property ON Owner.owner_name = Property.owner_name
+GROUP BY Owner.owner_name;
+
+SELECT Property.id, Property.address, Property.price, Client.name AS client_name
+FROM Property
+LEFT JOIN Appointment ON Property.id = Appointment.property_id
+LEFT JOIN Client ON Appointment.client_id = Client.id;
+
+SELECT Property.id, Property.address, COUNT(Appointment.id) AS total_appointments
+FROM Property
+LEFT JOIN Appointment ON Property.id = Appointment.property_id
+GROUP BY Property.id;
+
+SELECT Property.id, Property.address, Property.price
+FROM Property
+JOIN Appointment ON Property.id = Appointment.property_id
+WHERE Appointment.client_id = 'client_id_value';
+
+SELECT Client.name, Client.email, Property.address, Transaction.amount, Transaction.transaction_date
+FROM Client
+JOIN Transaction ON Client.id = Transaction.client_id
+JOIN Property ON Transaction.prop_id = Property.id;
+
+SELECT Property.property_type, AVG(Property.price) AS avg_price
+FROM Property
+GROUP BY Property.property_type;
+
+SELECT Property.id, Property.address, Transaction.amount, Transaction.transaction_date
+FROM Property
+JOIN Transaction ON Property.id = Transaction.prop_id
+GROUP BY Property.id
+ORDER BY Transaction.transaction_date DESC;
+
+SELECT Property.id, Property.address, Property.price
+FROM Property
+LEFT JOIN Appointment ON Property.id = Appointment.property_id
+WHERE Appointment.id IS NULL;
+
+
+SELECT Property.id, Property.address, Property.price, Appointment.appointment_date, Appointment.appointment_time
+FROM Property
+JOIN Appointment ON Property.id = Appointment.property_id
+WHERE Appointment.client_id = 'client_id_value';
+
+SELECT Property.id, Property.address, Property.price, Owner.owner_name, Owner.email AS owner_email
+FROM Property
+JOIN Owner ON Property.owner_name = Owner.owner_name;
+
+SELECT Owner.owner_name, COUNT(Property.id) AS total_properties
+FROM Owner
+LEFT JOIN Property ON Owner.owner_name = Property.owner_name
+GROUP BY Owner.owner_name;
+
+SELECT Property.id, Property.address, Property.price, Client.name AS client_name
+FROM Property
+LEFT JOIN Appointment ON Property.id = Appointment.property_id
+LEFT JOIN Client ON Appointment.client_id = Client.id;
+
+SELECT Property.id, Property.address, COUNT(Appointment.id) AS total_appointments
+FROM Property
+LEFT JOIN Appointment ON Property.id = Appointment.property_id
+GROUP BY Property.id;
+
+SELECT Property.id, Property.address, Property.price
+FROM Property
+JOIN Appointment ON Property.id = Appointment.property_id
+WHERE Appointment.client_id = 'client_id_value';
+
+SELECT Client.name, Client.email, Property.address, Transaction.amount, Transaction.transaction_date
+FROM Client
+JOIN Transaction ON Client.id = Transaction.client_id
+JOIN Property ON Transaction.prop_id = Property.id;
+
+SELECT Property.property_type, AVG(Property.price) AS avg_price
+FROM Property
+GROUP BY Property.property_type;
+
+SELECT Property.id, Property.address, Transaction.amount, Transaction.transaction_date
+FROM Property
+JOIN Transaction ON Property.id = Transaction.prop_id
+GROUP BY Property.id
+ORDER BY Transaction.transaction_date DESC;
+
+SELECT Property.id, Property.address, Property.price
+FROM Property
+LEFT JOIN Appointment ON Property.id = Appointment.property_id
+WHERE Appointment.id IS NULL;
+
+SELECT Property.id, Property.address, Property.price, Appointment.appointment_date, Appointment.appointment_time
+FROM Property
+JOIN Appointment ON Property.id = Appointment.property_id
+WHERE Appointment.client_id = 'client_id_value';

@@ -17,6 +17,8 @@
     <!-- Bootstrap Script -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.min.js" integrity="sha384-heAjqF+bCxXpCWLa6Zhcp4fu20XoNIA98ecBC1YkdXhszjoejr5y9Q77hIrv8R9i" crossorigin="anonymous"></script>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Real Estate Management</title>
   </head>
@@ -30,7 +32,6 @@
             <li><a href="#properties">PROPERTIES</a></li>
             <!-- <li><a href="#testimonials">Testimonials</a></li> -->
             <li><a href="#footer">CONTACT</a></li>
-            <!-- <li><a href="/booked_properties">Queries</a></li> -->
             {% if 'user_id' in session %}
             <li><a href="/logout">LOGOUT</a></li>
             {% else %}
@@ -40,7 +41,7 @@
         </ul>
       </nav>
       
-      <!-- Big Img -->
+      <!-------------------- Big Img -------------------->
       <div class="image-container">
         <img src="{{ url_for('static', filename='/images/big_img.png')}}" alt="" class="main-image">
         <div class="img-text">
@@ -51,12 +52,12 @@
 
     </header>
     <main>
+      <!-------------------- Properties Section -------------------->
       <section id="properties">
         <br><br>
-        <h2>PROPERTIES FOR SALE</h2>
-        <!-- Add filter options to your HTML template -->
+        <h2 class="text-center mb-5" style="font-weight: bolder;">PROPERTIES FOR SALE</h2>
         <div class="filter-section">
-          <select name="property_type">
+          <select name="property_type" class="input__search" style="max-width: 250px; padding: 10px; background-color: #F0F0F0;">
             <option value="">Select Property Type</option>
             <option value="1 BHK">1 BHK</option>
             <option value="2 BHK">2 BHK</option>
@@ -64,13 +65,13 @@
             <option value="Flat">Flat</option>
           </select>
   
-          <input type="number" name="property_size_min" placeholder="Min Size" />
-          <input type="number" name="property_size_max" placeholder="Max Size" />
+          <input type="number" name="property_size_min" placeholder="Min Size" class="input__search" style="max-width: 250px; padding: 10px; background-color: #F0F0F0;" />
+          <input type="number" name="property_size_max" placeholder="Max Size" class="input__search" style="max-width: 250px; padding: 10px; background-color: #F0F0F0;" />
   
-          <input type="number" name="price_min" placeholder="Min Price" />
-          <input type="number" name="price_max" placeholder="Max Price" />
+          <input type="number" name="price_min" placeholder="Min Price" class="input__search" style="max-width: 250px; padding: 10px; background-color: #F0F0F0;" />
+          <input type="number" name="price_max" placeholder="Max Price" class="input__search" style="max-width: 250px; padding: 10px; background-color: #F0F0F0;" />
   
-          <select name="address">
+          <select name="address" class="input__search" style="max-width: 250px; padding: 10px; background-color: #F0F0F0;">
             <option value="">Select Address</option>
             <option value="New Delhi">New Delhi</option>
             <option value="Mumbai">Mumbai</option>
@@ -78,46 +79,44 @@
             <option value="Hyderabad">Hyderabad</option>
           </select>
   
-          <button id="applyFilters">Apply Filters</button>
-          <button id="clearFilters">Remove Filter</button><br /><br />
+          <button id="applyFilters" class="property-btn" style="margin-top: 10px;">Apply Filters</button>
+          <button id="clearFilters" class="property-btn" style="margin-top: 10px;">Remove Filter</button><br /><br />
         </div>
         
-        <div class="search-section">
-          <input type="text" id="search" placeholder="Search Properties" />
+        <div class="input__container search-section">
+          <div class="shadow__input"></div>
+          <button class="input__button__shadow">
+            <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" height="20px" width="20px">
+              <path d="M4 9a5 5 0 1110 0A5 5 0 014 9zm5-7a7 7 0 104.2 12.6.999.999 0 00.093.107l3 3a1 1 0 001.414-1.414l-3-3a.999.999 0 00-.107-.093A7 7 0 009 2z" fill-rule="evenodd" fill="#17202A"></path>
+            </svg>
+          </button>
+          <input type="text" id="search" name="text" class="input__search" placeholder="Search Properties">
         </div>
         
         <div class="property-section">
-          <ul id="property-list">
+          <div class="row" id="property-list">
             {% for property in properties %}
-            <li>
-              <h3><b>{{ property.owner_name }}</b></h3>
-              <img src="{{ property.image1 }}" alt="Property Image 1" height="254px" width="260px" />
-              <!-- <img src="{{ property.image2 }}" alt="Property Image 2" height="254px" width="260px" />
-              <img src="{{ property.image3 }}" alt="Property Image 3" height="254px" width="260px" />
-              <img src="{{ property.image4 }}" alt="Property Image 4" height="254px" width="260px" />
-              <img src="{{ property.image5 }}" alt="Property Image 5" height="254px" width="260px" />
-              <img src="{{ property.image6 }}" alt="Property Image 6" height="254px" width="260px" /> -->
+            <div class="col-md-6">
+              <a href="/property/{{ property.id }}" id="view-details"><img src="{{ property.image1 }}" alt="Property Image 1" height="254px" width="260px" /></a>
+            </div>
+            <div class="col-md-6">
+              <h3><a href="/property/{{ property.id }}" id="view-details"><b>{{ property.property_name }}</b></a></h3>
+              <p><b>{{ property.property_type }}</b></p>
+              <p>{{ property.property_description }}</p>
+              <p><b>Property Size: {{ property.property_size }}</b></p>
               <p><b>{{ property.address }}</b></p>
-              <p>
-                <b>{{ property.property_size }} - {{ property.property_type }}</b>
-              </p>
-              <p><b>Price: {{ property.price }}</b></p>
-              <button>
-                <a href="/property/{{ property.id }}">View Details</a>
-              </button><br><br><br>
-            </li>
+              <p><b>₹ {{ property.price }}</b></p><br><br><br>
+            </div>
             {% endfor %}
-          </ul>
-        </div>
-        
+          </div>
+        </div>  
       </section>
 
 
-      <!-- Other sections like Testimonials and Contact -->
-      <!-- Testimonials -->
+      <!-------------------- Testimonials -------------------->
       <section id="testimonials" style="background-image: url('static/images/testimonial.jpg');">
         <div class="container">
-          <h1 class="text-center mb-5" style="font-weight: bolder;"><em>WHAT OUR CLIENTS THINK</em></h2>
+          <h1 class="text-center mb-5" style="font-weight: bolder;"><em>WHAT OUR CLIENTS THINK</em></h1>
           <div class="row">
             <div class="col-md-6">
               <div class="testimonial">
@@ -150,7 +149,7 @@
       </section>
       
 
-      <!-- Footer -->
+      <!-------------------- Footer -------------------->
       <footer class="footer" id="footer">
         <div class="footer row">
           <div class="contact-info col-md-6">
@@ -165,11 +164,10 @@
                 <address>500 Terry Francine Street, San Francisco, CA 94158</address>
               </div>
             </div>
-            <small>©2035 by Colton Properties. Powered and secured by Wix.</small>
+            <small>©2035 by Colton Properties. Powered and secured by colton.com.</small>
           </div>
           <div class="contact-form col-md-6">
               <h4 style="font-weight: bolder;">ALTERNATIVELY YOU CAN FILL <br> IN THE FOLLOWING CONTACT FORM:</h4>
-              <!-- Form -->
               <form action="/submit_form" method="post">
                   <div class="row">
                     <div class="col-md-6">
@@ -182,13 +180,13 @@
                       <button type='submit' style="margin-left: 48%;">SUBMIT</button>
                     </div>
                   </div>    
-                  
                </form> 
           </div>
       </div>
-      
     </footer>
     </main>
+
+    <!-------------------- JavaScript -------------------->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
       $(document).ready(function () {
@@ -224,6 +222,7 @@
 
         $("#clearFilters").click(function () {
           // Clear all filter inputs and reload properties without filters
+          $('select[name="property_name"]').val("");
           $('select[name="property_type"]').val("");
           $('input[name="property_size_min"]').val("");
           $('input[name="property_size_max"]').val("");

@@ -18,7 +18,9 @@
     <!-- Bootstrap Script -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.min.js" integrity="sha384-heAjqF+bCxXpCWLa6Zhcp4fu20XoNIA98ecBC1YkdXhszjoejr5y9Q77hIrv8R9i" crossorigin="anonymous"></script>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sell Your Property</title>
 </head>
 <body>
@@ -41,46 +43,48 @@
     </header>
     <main>
         <section id="sell-property">
-            <h2>Sell Your Property</h2>
-            <form action="/list_property" method="POST" enctype="multipart/form-data">
+          
+            <h2 class="mb-3" style="font-weight: bolder;">Sell Your Property</h2>
+            <form class="sell-form" action="/list_property" method="POST" enctype="multipart/form-data">
 
-                <label for="property_image1">Image 1:</label><br>
-                <input type="file" id="property_image1" name="property_image1" accept="image/*" required><br>
-                <label for="property_image2">Image 2:</label><br>
-                <input type="file" id="property_image2" name="property_image2" accept="image/*" required><br>
-                <label for="property_image3">Image 3:</label><br>
-                <input type="file" id="property_image3" name="property_image3" accept="image/*" required><br>
-                <label for="property_image4">Image 4:</label><br>
-                <input type="file" id="property_image4" name="property_image4" accept="image/*" required><br>
-                <label for="property_image5">Image 5:</label><br>
-                <input type="file" id="property_image5" name="property_image5" accept="image/*" required><br>
-                <label for="property_image6">Image 6:</label><br>
-                <input type="file" id="property_image6" name="property_image6" accept="image/*" required><br><br>   
+                <label for="property_image1">Image 1:</label>
+                <input class="mb-1 img-box" type="file" id="property_image1" name="property_image1" accept="image/*" required><br>
+                <label for="property_image2">Image 2:</label>
+                <input class="mb-1 img-box" type="file" id="property_image2" name="property_image2" accept="image/*" required><br>
+                <label for="property_image3">Image 3:</label>
+                <input class="mb-1 img-box" type="file" id="property_image3" name="property_image3" accept="image/*" required><br>
+                <label for="property_image4">Image 4:</label>
+                <input class="mb-1 img-box" type="file" id="property_image4" name="property_image4" accept="image/*" required><br>
 
+                <label for="property_name">Property Name:</label>
+                <input class="mb-1 property-btn" type="text" id="property_name" name="property_name" required><br>
+
+                <label for="property_description">Property Description:</label><br>
+                <textarea class="mb-1 property-btn" id="property_description" name="property_description" rows="4" required></textarea><br>
+                
                 <label for="address">Address:</label>
-                <input type="text" id="address" name="address" required><br><br>
+                <input class="mb-1 property-btn" type="text" id="address" name="address" required><br>
 
                 <label for="property_size">Property Size:</label>
-                <input type="text" id="property_size" name="property_size" required><br><br>
+                <input class="mb-1 property-btn" type="text" id="property_size" name="property_size" required><br>
 
                 <label for="property_type">Property Type:</label>
-                <select id="property_type" name="property_type" required>
+                <select class="mb-1 property-btn" id="property_type" name="property_type" required>
                     <option value="1 BHK">1 BHK</option>
                     <option value="2 BHK">2 BHK</option>
                     <option value="Villa">Villa</option>
                     <option value="Flat">Flat</option>
-                    <!-- Add other property types as needed -->
-                </select><br><br>
+                </select><br>
 
                 <label for="price">Price:</label>
-                <input type="text" id="price" name="price" required><br><br>
+                <input class="mb-1 property-btn" type="text" id="price" name="price" required><br>
 
-                <input type="submit" value="List Property">
+                <input type="submit" value="List Property" class="property-btn">
             </form>
         </section>
     </main>
 
-    <!-- Footer -->
+    <!-------------------- Footer -------------------->
     <footer class="footer" id="footer">
         <div class="footer row">
           <div class="contact-info col-md-6">
@@ -99,7 +103,6 @@
           </div>
           <div class="contact-form col-md-6">
               <h4 style="font-weight: bolder;">ALTERNATIVELY YOU CAN FILL <br> IN THE FOLLOWING CONTACT FORM:</h4>
-              <!-- Form -->
               <form action="/submit_form" method="post">
                   <div class="row">
                     <div class="col-md-6">
@@ -116,7 +119,6 @@
                </form> 
           </div>
       </div>
-      
     </footer>
 </body>
 </html>

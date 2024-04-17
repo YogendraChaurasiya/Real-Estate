@@ -22,12 +22,15 @@
     <!-- Bootstrap Script -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.min.js" integrity="sha384-heAjqF+bCxXpCWLa6Zhcp4fu20XoNIA98ecBC1YkdXhszjoejr5y9Q77hIrv8R9i" crossorigin="anonymous"></script>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Property Details</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
     <header>
+        <!-------------------- Navbar -------------------->
         <nav class="navbar">
             <img src="{{url_for('static', filename='/images/logo.png')}}" alt="Logo" height="50rem" width="25rem" / >
             <a href="/" class="nav-brand">COLTON <br> PROPERTIES</a>
@@ -46,38 +49,53 @@
           </nav>
     </header>
     <main>
-        <section id="property-details">
-            <h2>Property Details</h2>
-            <h3>{{ property.owner_name }}</h3>
-            <img src="/{{ property.image1 }}" alt="Property Image 1">
-            <img src="/{{ property.image2 }}" alt="Property Image 2">
-            <img src="/{{ property.image3 }}" alt="Property Image 3">
-            <img src="/{{ property.image4 }}" alt="Property Image 4">
-            <img src="/{{ property.image5 }}" alt="Property Image 5">
-            <img src="/{{ property.image6 }}" alt="Property Image 6">
-            <p>Address: {{ property.address }}</p>
-            <p>Property Size: {{ property.property_size }}</p>
-            <p>Property Type: {{ property.property_type }}</p>
-            <p>Price: {{ property.price }}</p>
-            <!-- Add button for booking appointment -->
-            <form method="POST" action="/schedule_appointment?id={{ property.id }}&owner_name={{ property.owner_name }}">
-                <label for="appointment_date">Appointment Date:</label>
-                <input type="date" id="appointment_date" name="appointment_date" required><br><br>
-                
-                <label for="appointment_time">Appointment Time:</label>
-                <input type="time" id="appointment_time" name="appointment_time" required><br><br>
-                
-                <input type="submit" value="Schedule Appointment"><br><br>
-
-            </form>
-            <button id="bookPropertyBtn" style="display:none;"><a href="{{ url_for('book_property', pid=property.id) }}">Book This Property</a></button><br><br>
-            <button id="payamountBtn" style="display:none;"><a href="{{ url_for('down_payment', prop_id=property.id) }}">Make Down Payment</a></button>
-            
-        </section>
+      <!-------------------- Property -------------------->
+      <section id="property-details" style="margin: 5% 20%;">
+        <h2 class="text-center mb-5" style="font-weight: bolder; text-align: center;">Property Details</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <img src="/{{ property.image1 }}" alt="Property Image 1" height="254px" width="260px">
+            </div>
+            <div class="col-md-6">
+                <img src="/{{ property.image2 }}" alt="Property Image 2" height="254px" width="260px">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <img src="/{{ property.image3 }}" alt="Property Image 3" height="254px" width="260px">
+            </div>
+            <div class="col-md-6">
+                <img src="/{{ property.image4 }}" alt="Property Image 4" height="254px" width="260px">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <h3 class="mb-5" style="font-weight: bolder;">{{ property.property_name }}</h3>
+                <p><b>Owner Name: {{ property.owner_name }}</b></p>
+                <p>{{ property.property_description}}</p>
+                <p>Address: {{ property.address }}</p>
+                <p>Property Size: {{ property.property_size }}</p>
+                <p>Property Type: {{ property.property_type }}</p>
+                <p>Price: ₹ {{ property.price }}</p>
+                <form method="POST" action="/schedule_appointment?id={{ property.id }}&owner_name={{ property.owner_name }}">
+                    <label for="appointment_date">Appointment Date:</label>
+                    <input type="date" id="appointment_date" name="appointment_date" required><br><br>
+                    
+                    <label for="appointment_time">Appointment Time:</label>
+                    <input type="time" id="appointment_time" name="appointment_time" required><br><br>
+                    
+                    <input type="submit" value="Schedule Appointment" class="property-btn"><br><br>
+                </form>
+                <button class="property-btn" id="bookPropertyBtn"><a href="{{ url_for('book_property', pid=property.id) }}"id="property-btn">Book This Property</a></button><br><br>
+                <button class="property-btn" id="payamountBtn"><a href="{{ url_for('down_payment', prop_id=property.id) }}"id="property-btn">Make Down Payment</a></button>
+            </div>
+        </div>
+    </section>
+    
         
     </main>
 
-    <!-- Footer -->
+    <!-------------------- Footer -------------------->
     <footer class="footer" id="footer">
         <div class="footer row">
           <div class="contact-info col-md-6">
@@ -96,7 +114,6 @@
           </div>
           <div class="contact-form col-md-6">
               <h4 style="font-weight: bolder;">ALTERNATIVELY YOU CAN FILL <br> IN THE FOLLOWING CONTACT FORM:</h4>
-              <!-- Form -->
               <form action="/submit_form" method="post">
                   <div class="row">
                     <div class="col-md-6">
@@ -136,7 +153,6 @@
         // Set a timeout to call showButtons() after 1 hour of the appointment time
         setTimeout(showButtons, oneHourAfterAppointment - Date.now());
     </script>
-    
 </body>
 </html>
  

@@ -17,33 +17,28 @@
     <!-- Bootstrap Script -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.min.js" integrity="sha384-heAjqF+bCxXpCWLa6Zhcp4fu20XoNIA98ecBC1YkdXhszjoejr5y9Q77hIrv8R9i" crossorigin="anonymous"></script>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
 </head>
 <body>
-    <ul id="property-list">
-        {% for property in properties %}
-          <li>
-            <h3><b>{{ property.owner_name }}</b></h3>
-            <img src="{{ property.image1 }}" alt="Property Image 1" />
-            <!-- <img src="{{ property.image2 }}" alt="Property Image 2" />
-            <img src="{{ property.image3 }}" alt="Property Image 3" />
-            <img src="{{ property.image4 }}" alt="Property Image 4" />
-            <img src="{{ property.image5 }}" alt="Property Image 5" />
-            <img src="{{ property.image6 }}" alt="Property Image 6" /> -->
-            <p><b>{{ property.address }}</b></p>
-            <p>
-              <b>{{ property.property_size }} - {{ property.property_type }}</b>
-            </p>
-            <p><b>Price: {{ property.price }}</b></p>
-            <button>
-              <a href="/property/{{ property.id }}">View Details</a>
-            </button>
-          </li>
-          {% endfor %}
-    </ul>
-    
-    
-<!-- {% include 'footer.html' %} -->
+  <div class="property-section">
+    <div class="row" id="property-list">
+      {% for property in properties %}
+      <div class="col-md-6">
+        <a href="/property/{{ property.id }}" id="view-details"><img src="{{ property.image1 }}" alt="Property Image 1" height="254px" width="260px" /></a>
+      </div>
+      <div class="col-md-6">
+        <h3><a href="/property/{{ property.id }}" id="view-details"><b>{{ property.property_name }}</b></a></h3>
+        <p><b>{{ property.property_type }}</b></p>
+        <p>{{ property.property_description }}</p>
+        <p><b>Property Size: {{ property.property_size }}</b></p>
+        <p><b>{{ property.address }}</b></p>
+        <p><b>₹ {{ property.price }}</b></p><br><br><br>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
 </body>
 </html>

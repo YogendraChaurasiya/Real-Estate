@@ -12,15 +12,15 @@ from flask import jsonify
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///real_estate.db'
-app.config['SECRET_KEY'] = 'your_secret_key'  # Add a secret key for session management
+app.config['SECRET_KEY'] = 'your_secret_key'
 db = SQLAlchemy(app)
 
 UPLOAD_FOLDER = 'static/images'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'  
-app.config['MAIL_PORT'] = 587  # Set the port for the email server
-app.config['MAIL_USE_TLS'] = True  # Enable TLS
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'yogendrachaurasiya30@gmail.com'  
 app.config['MAIL_PASSWORD'] = 'oizzrkharzmoltmv'  
 
@@ -33,6 +33,7 @@ class Client(db.Model):
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     phone = db.Column(db.String(10), unique=True, nullable=False)
+    password = db.Column(db.String(128), nullable=False)
     photo = db.Column(db.String(200))
 
 class Owner(db.Model):
@@ -40,12 +41,15 @@ class Owner(db.Model):
     owner_name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     phone = db.Column(db.String(10), unique=True, nullable=False)
+    password = db.Column(db.String(128), nullable=False)
     photo = db.Column(db.String(200))
 
 class Property(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     owner_name = db.Column(db.String(100), db.ForeignKey('owner.owner_name'), nullable=False)
     address = db.Column(db.String(200), nullable=False)
+    property_name = db.Column(db.String(100), nullable=False)
+    property_description = db.Column(db.Text, nullable=False)  
     property_size = db.Column(db.String(20), nullable=False)
     property_type = db.Column(db.String(50), nullable=False)
     price = db.Column(db.Float, nullable=False)
@@ -126,6 +130,8 @@ def list_property():
         owner_id = session['owner_id']
         owner = Owner.query.get(owner_id)
         if owner:
+            property_name = request.form['property_name']
+            property_description = request.form['property_description']
             address = request.form['address']
             property_size = request.form['property_size']
             property_type = request.form['property_type']
@@ -147,8 +153,9 @@ def list_property():
                         property_images.append(file_path)
 
             # Create a new property with the logged-in owner's owner_name
-            new_property = Property(owner_name=owner.owner_name, address=address, property_size=property_size,
-                                    property_type=property_type, price=price)
+            new_property = Property(owner_name=owner.owner_name, property_name=property_name, 
+                                    property_description=property_description, address=address, 
+                                    property_size=property_size, property_type=property_type, price=price)
             db.session.add(new_property)
             db.session.commit()
 
@@ -167,6 +174,7 @@ def search_properties():
     query = request.form.get('query')
     # Search for properties that match the query
     properties = Property.query.filter(
+        (Property.property_name.ilike(f'%{query}%')) |
         (Property.owner_name.ilike(f'%{query}%')) |
         (Property.address.ilike(f'%{query}%')) |
         (Property.property_type.ilike(f'%{query}%')) |
@@ -183,6 +191,19 @@ def client_signup():
         name = request.form['name']
         email = request.form['email']
         phone = request.form['phone']
+        password = request.form['password']
+        
+        # Validate password
+        if not (
+            len(password) >= 8 and
+            any(char.islower() for char in password) and
+            any(char.isupper() for char in password) and
+            any(char.isdigit() for char in password) and
+            any(char in string.punctuation for char in password)
+        ):
+            flash("Password must be at least 8 characters long and contain at least 1 lowercase alphabet, 1 uppercase alphabet, 1 special character, and 1 numeric value.")
+            return redirect(url_for('client_signup'))
+        
         # Check if the email is already registered
         existing_user = Client.query.filter_by(email=email).first()
         if existing_user:
@@ -198,7 +219,7 @@ def client_signup():
                 photo_path = None
             
             # Create a new client user
-            new_client = Client(name=name, email=email, phone=phone, photo=photo_path)
+            new_client = Client(name=name, email=email, phone=phone, password=password, photo=photo_path)
             db.session.add(new_client)
             db.session.commit()
             # Store user_id in session after successful signup
@@ -213,22 +234,26 @@ def owner_signup():
         owner_name = request.form['owner_name']
         email = request.form['email']
         phone = request.form['phone']
+        password = request.form['password']
+        
+        # Validate password
+        if not (
+            len(password) >= 8 and
+            any(char.islower() for char in password) and
+            any(char.isupper() for char in password) and
+            any(char.isdigit() for char in password) and
+            any(char in string.punctuation for char in password)
+        ):
+            flash("Password must be at least 8 characters long and contain at least 1 lowercase alphabet, 1 uppercase alphabet, 1 special character, and 1 numeric value.")
+            return redirect(url_for('owner_signup'))
+        
         # Check if the email is already registered
         existing_owner = Owner.query.filter_by(email=email).first()
         if existing_owner:
             # Owner already exists, redirect to owner login page
             return redirect(url_for('owner_login'))
         else:
-            # Process photo upload
-            # if 'photo' in request.files:
-            #     photo = request.files['photo']
-            #     photo_path = 'static/images/' + photo.filename
-            #     photo.save(photo_path)
-            # else:
-            #     photo_path = None
-            
-            # Create a new owner
-            new_owner = Owner(owner_name=owner_name, email=email, phone=phone)
+            new_owner = Owner(owner_name=owner_name, email=email, password=password, phone=phone)
             db.session.add(new_owner)
             db.session.commit()
             # Store owner_id in session after successful signup
@@ -242,12 +267,18 @@ def owner_signup():
 def client_login():
     if request.method == 'POST':
         email = request.form['email']
+        password = request.form['password']
         # Check if the client exists in the database
         client = Client.query.filter_by(email=email).first()
         if client:
-            # Client exists, store user_id in session and redirect to index page
-            session['user_id'] = client.id
-            return redirect(url_for('index'))
+            # Verify password
+            if client.password == password:
+                # Client exists and password matches, store user_id in session and redirect to index page
+                session['user_id'] = client.id
+                return redirect(url_for('index'))
+            else:
+                flash("Incorrect email or password.")
+                return redirect(url_for('client_login'))
         else:
             # Client does not exist, redirect to client signup page
             return redirect(url_for('client_signup'))
@@ -257,12 +288,18 @@ def client_login():
 def owner_login():
     if request.method == 'POST':
         email = request.form['email']
+        password = request.form['password']
         # Check if the owner exists in the database
         owner = Owner.query.filter_by(email=email).first()
         if owner:
-            # Owner exists, store owner_id in session and redirect to index page
-            session['owner_id'] = owner.id
-            return redirect(url_for('sell_property'))
+            # Verify password
+            if owner.password == password:
+                # Owner exists and password matches, store owner_id in session and redirect to index page
+                session['owner_id'] = owner.id
+                return redirect(url_for('sell_property'))
+            else:
+                flash("Incorrect email or password.")
+                return redirect(url_for('owner_login'))
         else:
             # Owner does not exist, redirect to owner signup page
             return redirect(url_for('owner_signup'))
@@ -301,7 +338,7 @@ def send_owner_appointment_email(owner_email, appointment_data):
 @app.route('/schedule_appointment', methods=['POST'])
 def schedule_appointment():
     if 'user_id' not in session:
-        return redirect(url_for('client_login'))  # Redirect to client login page if user is not logged in
+        return redirect(url_for('client_login'))
     
     if request.method == 'POST':
         client_id = session['user_id']
@@ -362,7 +399,7 @@ def schedule_appointment():
 @app.route('/book_property', methods=['GET', 'POST'])
 def book_property():
     if 'user_id' not in session:
-        return redirect(url_for('client_login'))  # Redirect to client login page if user is not logged in 
+        return redirect(url_for('client_login'))
 
     if request.method == 'POST':
         pid = request.args.get('pid')
@@ -389,7 +426,7 @@ def book_property():
 @app.route('/down_payment', methods=['GET', 'POST'])
 def down_payment():
     if 'user_id' not in session:
-        return redirect(url_for('client_login'))  # Redirect to client login page if user is not logged in
+        return redirect(url_for('client_login'))
 
     if request.method == 'POST':
         

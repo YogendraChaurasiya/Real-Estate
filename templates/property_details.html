@@ -8,25 +8,42 @@
       type="text/css"
       href="{{ url_for('static', filename='css/index_css.css') }}" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index_css.css') }}" />
+    <!--Google Font-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;800&family=Ubuntu&display=swap" rel="stylesheet">
+    <!--Bootstrap CDN-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js" integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N" crossorigin="anonymous"></script>
+    <!--Font Awesome CDN-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+    <script defer src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" integrity="sha384-rOA1PnstxnOBLzCLMcre8ybwbTmemjzdNlILg8O7z1lUkLXozs4DHonlDtnE7fpc" crossorigin="anonymous"></script>
+    <!-- Bootstrap Script -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.min.js" integrity="sha384-heAjqF+bCxXpCWLa6Zhcp4fu20XoNIA98ecBC1YkdXhszjoejr5y9Q77hIrv8R9i" crossorigin="anonymous"></script>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Property Details</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
     <header>
-        <nav>
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="#properties">Properties</a></li>
-                <li><a href="#testimonials">Testimonials</a></li>
-                <li><a href="#contact">Contact</a></li>
+        <nav class="navbar">
+            <img src="{{url_for('static', filename='/images/logo.png')}}" alt="Logo" height="50rem" width="25rem" / >
+            <a href="/" class="nav-brand">COLTON <br> PROPERTIES</a>
+            <ul class="nav-items">
+                <li><a href="/">HOME</a></li>
+                <li><a href="#properties">PROPERTIES</a></li>
+                <!-- <li><a href="#testimonials">Testimonials</a></li> -->
+                <li><a href="#footer">CONTACT</a></li>
                 {% if 'user_id' in session %}
-                <li><a href="/logout">Logout</a></li>
+                <li><a href="/logout">LOGOUT</a></li>
                 {% else %}
-                <li><a href="/client_login">Login</a></li>
+                <li><a href="/client_login">LOGIN</a></li>
                 {% endif %}
-                <li><a href="/sell_property">Sell Your Property</a></li>
+                <li><a href="/owner_login" class="sell-property"style="color: blue;">SELL YOUR PROPERTY</a></li>
             </ul>
-        </nav>
+          </nav>
     </header>
     <main>
         <section id="property-details">
@@ -59,6 +76,45 @@
         </section>
         
     </main>
+
+    <!-- Footer -->
+    <footer class="footer" id="footer">
+        <div class="footer row">
+          <div class="contact-info col-md-6">
+            <h4 style="font-weight: bolder;">TO CONTACT OUR RENTAL OR SALES TEAM <br>PLEASE CALL OR EMAIL US:</h4>
+            <div class="row">
+              <div class="col-md-6">
+                <p>Tel: 123-456-7890</p>
+                <p>Email: info@mysite.com</p>
+                <p>Fax: 123-456-7890</p>
+              </div>
+              <div class="col-md-6">
+                <address>500 Terry Francine Street, San Francisco, CA 94158</address>
+              </div>
+            </div>
+            <small>©2035 by Colton Properties. Powered and secured by Wix.</small>
+          </div>
+          <div class="contact-form col-md-6">
+              <h4 style="font-weight: bolder;">ALTERNATIVELY YOU CAN FILL <br> IN THE FOLLOWING CONTACT FORM:</h4>
+              <!-- Form -->
+              <form action="/submit_form" method="post">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <input type="text" name="name" placeholder="Name"><br>
+                      <input type="email" name="email" placeholder="Email"><br>
+                      <input type="text" name="subject" placeholder="Subject"><br>
+                    </div>
+                    <div class="col-md-6" id="message">
+                      <textarea name="message" placeholder="Message" rows="5"></textarea><br>
+                      <button type='submit' style="margin-left: 48%;">SUBMIT</button>
+                    </div>
+                  </div>    
+                  
+               </form> 
+          </div>
+      </div>
+      
+    </footer>
 
     <script>
         // Function to show the buttons after 1 hour of the appointment time

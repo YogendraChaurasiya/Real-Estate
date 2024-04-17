@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booked Properties</title>
+</head>
+<body>
+    <h1>Booked Properties</h1>
+    
+    {% if no_properties_booked %}
+        <p>No properties have been booked till now.</p>
+    {% else %}
+        <table>
+            <tr>
+                <th>Property ID</th>
+                <th>Location</th>
+                <th>Booked Date</th>
+            </tr>
+            {% for booked_property, property in booked_properties %}
+            <tr>
+                <td>{{ property.id }}</td>
+                <td>{{ property.address }}</td>
+                <td>{{ booked_property.booked_date }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+</body>
+</html>

@@ -4,10 +4,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/signup.css') }}" />
+    <!--Google Font-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;800&family=Ubuntu&display=swap" rel="stylesheet">
+    <!--Bootstrap CDN-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js" integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N" crossorigin="anonymous"></script>
+    <!--Font Awesome CDN-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+    <script defer src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" integrity="sha384-rOA1PnstxnOBLzCLMcre8ybwbTmemjzdNlILg8O7z1lUkLXozs4DHonlDtnE7fpc" crossorigin="anonymous"></script>
+    <!-- Bootstrap Script -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.min.js" integrity="sha384-heAjqF+bCxXpCWLa6Zhcp4fu20XoNIA98ecBC1YkdXhszjoejr5y9Q77hIrv8R9i" crossorigin="anonymous"></script>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Owner Sign Up</title>
 </head>
 <body>
-    <h2>Owner Sign Up</h2>
+    <div class="form-container">
+        <p class="title">Owner Sign Up</p>
+        <form method="POST" action="{{ url_for('owner_signup') }}" class="form" enctype="multipart/form-data">
+            <div class="input-group">
+                <label for="owner_name">Name</label>
+                <input type="text" name="owner_name" id="owner_name" placeholder="" required>
+            </div>
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="username" placeholder="" pattern="[a-zA-Z0-9._%+-]+@gmail.com" required>
+            </div>
+            <div class="input-group">
+                <label for="phone">Phone</label>
+                <input type="text" name="phone" id="phone" placeholder="" pattern="[6-9]{1}[0-9]{9}" maxlength="10" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" placeholder="">
+                <div class="forgot">
+                    <a rel="noopener noreferrer" href="#">Forgot Password ?</a>
+                </div>
+            </div>
+            <input type="submit" value="Sign Up" class="sign">
+        </form>
+        <p class="signup">Don't have an account?
+            <a rel="noopener noreferrer" href="{{ url_for('owner_login') }}" class="">Sign up</a>
+        </p>
+    </div>
+
+    <!-- <h2>Owner Sign Up</h2>
     <form method="POST" action="{{ url_for('owner_signup') }}" enctype="multipart/form-data">
         <label for="owner_name">Owner Name:</label><br>
         <input type="text" id="owner_name" name="owner_name" required><br><br>
@@ -15,10 +59,8 @@
         <input type="email" id="email" name="email" pattern="[a-zA-Z0-9._%+-]+@gmail.com" title="Please enter a valid Gmail address" required><br><br>
         <label for="phone">Phone:</label><br>
         <input type="text" id="phone" name="phone" pattern="[6-9]{1}[0-9]{9}" maxlength="10" title="Please enter a valid 10-digit phone number starting with 6, 7, 8, or 9" required><br><br>
-        <!-- <label for="photo">Photo:</label><br>
-        <input type="file" id="photo" name="photo" accept="image/*" required><br><br> -->
         <input type="submit" value="Sign Up">
     </form>
-    <p>Already have an account? <a href="{{ url_for('owner_login') }}">Login here</a></p>
+    <p>Already have an account? <a href="{{ url_for('owner_login') }}">Login here</a></p> -->
 </body>
 </html>

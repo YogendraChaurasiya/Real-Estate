@@ -1,72 +1,224 @@
-
-header {
-    background-color: #333;
-    color: #fff; 
-    padding: 20px; 
+/* index_css.css */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-nav ul {
-    list-style-type: none; 
-    margin: 0; 
-    padding: 0; 
+body {
+  font-family: "Montserrat-black", sans-serif;
+  text-align: center;
 }
 
-nav ul li {
-    display: inline; 
-    margin-right: 20px; 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Montserrat", sans-serif;
 }
 
-nav ul li a {
-    color: #fff; 
-    text-decoration: none;
+/* Navigation Bar */
+
+.navbar {
+  padding: 15px 0; /* Vertical padding for the navbar */
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
 }
 
-nav ul li a:hover {
-    text-decoration: underline; 
+.nav-brand {
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 1.5rem;
+  line-height: 0.8;
+  margin-left: -7%; /*Left margin for nav-brand */
+  color: #323644;
+  text-decoration: none;
+  /* font-weight: bolder; */
+}
+
+.nav-items {
+  list-style-type: none;
+  display: flex; /* Display items horizontally */
+  margin-right: 20%; /* Right margin for last nav-item */
+  align-items: flex-start; /* Align items to the start */
+}
+
+.nav-items li {
+  margin-right: 33px; /* Spacing between nav-items */
+  padding: 10px 0; /* Top and bottom padding for nav-items */
+}
+
+.nav-items li:last-child {
+  margin-right: 0; /* Remove margin for the last nav-item */
+}
+
+.nav-items a {
+  color: #323644;
+  text-decoration: none; 
+}
+
+.sell-property {
+  margin-left: auto;
+}
+
+.navbar img{
+  margin-left: 20%;
+  margin-right: 0;
+  width: auto;
+  padding: 0;
+}
+
+/* ----------------------------- IMAGE CONTAIENR ---------------------------- */
+.image-container {
+  display: flex;
+}
+
+.main-image {
+  width: 100%;
+}
+
+.img-text {
+  font-family: opensanshebrewcondensed-regular, sans-serif;
+  position: absolute;
+  left: 20%;
+  transform: translateX(-20%);
+  color: #323644;
+  font-weight: bolder;
+  font-size: 80px;
+  margin-left: 8%;
+  /* width: 45%; */
+}
+
+.text{
+  font-size: 80px;
+  align-self: center;
+  line-height: 96px;
+  vertical-align: baseline;
+  letter-spacing: normal;
+  word-spacing: 0px;
+  font-weight: 700;
+  font-style: normal;
+  font-variant: normal;
+  text-transform: none;
+  text-decoration: none rgb(50, 54, 68);
+  text-align: start;
+  text-indent: 0px;
+  margin-top: 70px;
+}
+
+.img-text button {
+  background-color: transparent;
+  color: #323644;
+  border: solid #323644;
+  padding: 0.4vw 2.2vw;
+  font-size: 1vw;
+  font-weight: 800;
+}
+
+#Queries{
+  text-decoration: none;
+  color: #323644;
+}
+
+/* Properties */
+
+#properties {
+  margin-left: 20%;
+  margin-right: 20%;
+}
+
+.filter-section {
+  margin-bottom: 20px;
+}
+
+/* CSS for search section */
+.search-section {
+  margin-bottom: 20px;
+}
+
+/* CSS for properties section */
+.property-section {
+  margin-bottom: 20px;
 }
 
 
-main {
-    padding: 20px; 
+/* Testimonials Section*/
+
+#testimonials {
+  padding: 55px 0; /* Adjust padding as needed */
+  color: #fff; /* Text color */
+  /* background-size: 110%; */
 }
 
-section {
-    margin-bottom: 40px;
+.testimonial {
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 30px; /* Spacing between testimonials */
 }
 
-h2 {
-    color: #333; 
-    font-size: 24px; 
-    margin-bottom: 20px;
-    
-} 
-h3{
-    font-weight: bolder;
+.client-name {
+  font-weight: bold;
 }
 
-ul {
-    list-style-type: none;
-    padding: 0; 
+/* Footer */
+.footer {
+    display: flex;
+    justify-content: space-between;
+    background-color: #323644;
+    color: #9396A2;
+    padding: 50px 150px;
+    box-sizing: border-box;
 }
 
-li {
-    margin-bottom: 20px;
+/* Contact Info */
+.contact-info p {
+    margin-bottom: 10px;
+    font-size: medium;
+    line-height: 0.8;
 }
 
-img {
-    max-width: 100%; 
-    height: auto; 
-    margin-bottom: 20px; 
+.contact-form address{
+  margin-bottom: 10px;
+  font-size: medium;
 }
 
-a {
-    color: #007bff; 
-    text-decoration: none; 
+.contact-form small{
+  padding-top: 100px;
+  font-size: large;
 }
 
-a:hover {
-    text-decoration: underline; 
-    background:cadetblue;
+/* Contact Form */
+.contact-info h4,
+.contact-form h4 {
+   margin-bottom: 30px;
+   font-size: medium; 
+   line-height: 1.5;
 }
 
+.contact-form input[type=text], 
+.contact-form input[type=email], 
+.contact-form textarea{
+   width: 100%;
+   padding: 8px;
+   margin-bottom: 8px; 
+   border: 1px solid #ccc;
+   border-radius: 4px;
+   background-color: transparent;
+   margin-right: 0%;
+}
 
+.contact-form button {
+   padding: 1px 20px;
+   background-color: #008cba;
+   color: white;
+   border: none;
+   border-radius: 4px;
+   cursor: pointer;
+}
+
+.contact-form button:hover {
+   background-color: #005f73;
+}

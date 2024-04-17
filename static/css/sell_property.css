@@ -1,0 +1,130 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: "Montserrat-black", sans-serif;
+    text-align: center;
+  }
+  
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Montserrat", sans-serif;
+  }
+  
+  /* Navigation Bar */
+  
+  .navbar {
+    padding: 15px 0; /* Vertical padding for the navbar */
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+  }
+  
+  .nav-brand {
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 1.5rem;
+    line-height: 0.8;
+    margin-left: -22%; /*Left margin for nav-brand */
+    color: #323644;
+    text-decoration: none;
+    /* font-weight: bolder; */
+  }
+  
+  .nav-items {
+    list-style-type: none;
+    display: flex; /* Display items horizontally */
+    margin-right: 20%; /* Right margin for last nav-item */
+    align-items: flex-start; /* Align items to the start */
+  }
+  
+  .nav-items li {
+    margin-right: 33px; /* Spacing between nav-items */
+    padding: 10px 0; /* Top and bottom padding for nav-items */
+  }
+  
+  .nav-items li:last-child {
+    margin-right: 0; /* Remove margin for the last nav-item */
+  }
+  
+  .nav-items a {
+    color: #323644;
+    text-decoration: none; 
+  }
+  
+  .sell-property {
+    margin-left: auto;
+  }
+  
+  .navbar img{
+    margin-left: 20%;
+    margin-right: 0;
+    width: auto;
+    padding: 0;
+  }
+
+  /* Footer */
+.footer {
+    display: flex;
+    justify-content: space-between;
+    background-color: #323644;
+    color: #9396A2;
+    padding: 50px 150px;
+    box-sizing: border-box;
+}
+
+/* Contact Info */
+.contact-info p {
+    margin-bottom: 10px;
+    font-size: medium;
+    line-height: 0.8;
+}
+
+.contact-form address{
+  margin-bottom: 10px;
+  font-size: medium;
+}
+
+.contact-form small{
+  padding-top: 100px;
+  font-size: large;
+}
+
+/* Contact Form */
+.contact-info h4,
+.contact-form h4 {
+   margin-bottom: 30px;
+   font-size: medium; 
+   line-height: 1.5;
+}
+
+.contact-form input[type=text], 
+.contact-form input[type=email], 
+.contact-form textarea{
+   width: 100%;
+   padding: 8px;
+   margin-bottom: 8px; 
+   border: 1px solid #ccc;
+   border-radius: 4px;
+   background-color: transparent;
+   margin-right: 0%;
+}
+
+.contact-form button {
+   padding: 1px 20px;
+   background-color: #008cba;
+   color: white;
+   border: none;
+   border-radius: 4px;
+   cursor: pointer;
+}
+
+.contact-form button:hover {
+   background-color: #005f73;
+}

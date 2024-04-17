@@ -272,7 +272,7 @@ def owner_login():
 def logout():
     # Remove user_id from session if present
     session.pop('user_id', None)
-    return redirect(url_for('client_login'))
+    return redirect(url_for('index'))
 
 @app.route('/sell_property', methods=['GET', 'POST'])
 def sell_property():
@@ -414,6 +414,17 @@ def down_payment():
         return redirect(url_for('index'))
     
     return render_template('down_payment.html')
+
+
+# Add a new route to handle the query 1
+@app.route('/booked_properties')
+def get_booked_properties():
+    
+    booked_properties = db.session.query(PropertyBooked, Property).join(Property).all()
+
+    # Check if there are no booked properties
+    no_properties_booked = not bool(booked_properties)
+    return render_template('booked_properties.html', booked_properties=booked_properties , no_properties_booked=no_properties_booked)
 
 if __name__ == '__main__':
     with app.app_context():

@@ -29,7 +29,7 @@
         <a href="/" class="nav-brand">COLTON <br> PROPERTIES</a>
         <ul class="nav-items">
             <li><a href="/">HOME</a></li>
-            <li><a href="/properties">PROPERTIES</a></li>
+            <li><a href="#properties">PROPERTIES</a></li>
             <!-- <li><a href="#testimonials">Testimonials</a></li> -->
             <li><a href="#footer">CONTACT</a></li>
             {% if 'user_id' in session %}
@@ -41,17 +41,6 @@
         </ul>
       </nav>
       
-      <!-------------------- Big Img -------------------->
-      <div class="image-container">
-        <img src="{{ url_for('static', filename='/images/big_img.png')}}" alt="" class="main-image">
-        <div class="img-text">
-          <h1 class="text">LUXURY VILLA <br>MINUTES <br>FROM THE BAY</h1>
-          <button><a href="/booked_properties" id="Queries">Show Details</a></button>
-        </div>
-      </div>
-
-    </header>
-    <main>
       <!-------------------- Properties Section -------------------->
       <section id="properties">
         <br><br>
@@ -111,43 +100,6 @@
           </div>
         </div>  
       </section>
-
-
-      <!-------------------- Testimonials -------------------->
-      <section id="testimonials" style="background-image: url('static/images/testimonial.jpg');">
-        <div class="container">
-          <h1 class="text-center mb-5" style="font-weight: bolder;"><em>WHAT OUR CLIENTS THINK</em></h1>
-          <div class="row">
-            <div class="col-md-6">
-              <div class="testimonial">
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget ipsum vitae urna dictum efficitur. Vivamus fringilla scelerisque ligula, nec cursus libero interdum id. Nullam nec fermentum orci. </p>
-                <p class="client-name">John Doe</p>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="testimonial">
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget ipsum vitae urna dictum efficitur. Vivamus fringilla scelerisque ligula, nec cursus libero interdum id. Nullam nec fermentum orci. </p>
-                <p class="client-name">Jane Smith</p>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6">
-              <div class="testimonial">
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget ipsum vitae urna dictum efficitur. Vivamus fringilla scelerisque ligula, nec cursus libero interdum id. Nullam nec fermentum orci. </p>
-                <p class="client-name">Michael Johnson</p>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="testimonial">
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget ipsum vitae urna dictum efficitur. Vivamus fringilla scelerisque ligula, nec cursus libero interdum id. Nullam nec fermentum orci. </p>
-                <p class="client-name">Emily Davis</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      
 
       <!-------------------- Footer -------------------->
       <footer class="footer" id="footer">

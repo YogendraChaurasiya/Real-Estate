@@ -115,11 +115,16 @@ def index():
 
     return render_template('index.html', properties=properties)
 
-
 @app.route('/property/<int:id>')
 def property_details(id):
     property = Property.query.get_or_404(id)
     return render_template('property_details.html', property=property, id=id, owner_name=property.owner_name)
+
+@app.route('/properties')
+def properties():
+    # Fetch properties data as needed
+    properties = Property.query.all()
+    return render_template('properties.html', properties=properties)
 
 @app.route('/list_property', methods=['POST'])
 def list_property():

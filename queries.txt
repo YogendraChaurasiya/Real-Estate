@@ -3,44 +3,71 @@
 -- Use the ▷ button in the top right corner to run the entire file.
 
 SELECT * FROM owner;
+
+Retrieve all properties along with their owners' details:
+
 SELECT Property.id, Property.address, Property.price, Owner.owner_name, Owner.email AS owner_email
 FROM Property
 JOIN Owner ON Property.owner_name = Owner.owner_name;
+
+
+Find the total number of properties listed by each owner:
 
 SELECT Owner.owner_name, COUNT(Property.id) AS total_properties
 FROM Owner
 LEFT JOIN Property ON Owner.owner_name = Property.owner_name
 GROUP BY Owner.owner_name;
 
+
+List properties along with the client's name who booked them, if booked:
+
 SELECT Property.id, Property.address, Property.price, Client.name AS client_name
 FROM Property
 LEFT JOIN Appointment ON Property.id = Appointment.property_id
 LEFT JOIN Client ON Appointment.client_id = Client.id;
+
+
+Find the total number of appointments scheduled for each property:
 
 SELECT Property.id, Property.address, COUNT(Appointment.id) AS total_appointments
 FROM Property
 LEFT JOIN Appointment ON Property.id = Appointment.property_id
 GROUP BY Property.id;
 
+
+Retrieve the properties booked by a specific client:
+
 SELECT Property.id, Property.address, Property.price
 FROM Property
 JOIN Appointment ON Property.id = Appointment.property_id
-WHERE Appointment.client_id = 'client_id_value';
+WHERE Appointment.client_id = 'H7ND6X';
 
-SELECT Client.name, Client.email, Property.address, Transaction.amount, Transaction.transaction_date
+
+List the clients who have made down payments, along with the property details:
+
+SELECT Client.name, Client.email, Property.address, Payment.amount, Payment.transaction_date
 FROM Client
-JOIN Transaction ON Client.id = Transaction.client_id
-JOIN Property ON Transaction.prop_id = Property.id;
+JOIN Payment ON Client.id = Payment.client_id
+JOIN Property ON Payment.prop_id = Property.id;
+
+
+Find the average price of properties of each type:
 
 SELECT Property.property_type, AVG(Property.price) AS avg_price
 FROM Property
 GROUP BY Property.property_type;
 
-SELECT Property.id, Property.address, Transaction.amount, Transaction.transaction_date
+
+Retrieve the details of the latest transaction made for each property:
+
+SELECT Property.id, Property.address, Payment.amount, Payment.transaction_date
 FROM Property
-JOIN Transaction ON Property.id = Transaction.prop_id
+JOIN Payment ON Property.id = Payment.prop_id
 GROUP BY Property.id
-ORDER BY Transaction.transaction_date DESC;
+ORDER BY Payment.transaction_date DESC;
+
+
+List the properties that have not been booked yet:
 
 SELECT Property.id, Property.address, Property.price
 FROM Property
@@ -48,56 +75,110 @@ LEFT JOIN Appointment ON Property.id = Appointment.property_id
 WHERE Appointment.id IS NULL;
 
 
+Find the properties booked by a specific client along with the appointment details:
+
 SELECT Property.id, Property.address, Property.price, Appointment.appointment_date, Appointment.appointment_time
 FROM Property
 JOIN Appointment ON Property.id = Appointment.property_id
-WHERE Appointment.client_id = 'client_id_value';
+WHERE Appointment.client_id = 'JPTCTQ';
 
-SELECT Property.id, Property.address, Property.price, Owner.owner_name, Owner.email AS owner_email
+
+Retrieve the properties listed by owners who have more than 3 properties listed:
+
+SELECT Property.id, Property.address, Property.price, Owner.owner_name
 FROM Property
-JOIN Owner ON Property.owner_name = Owner.owner_name;
+JOIN Owner ON Property.owner_name = Owner.owner_name
+GROUP BY Owner.owner_name
+HAVING COUNT(Property.id) > 3;
 
-SELECT Owner.owner_name, COUNT(Property.id) AS total_properties
+Retrieve the properties listed by owners who have more than 3 properties listed and have made at least 1 down payment:
+
+SELECT Property.id, Property.address, Property.price, Owner.owner_name 
+FROM Property
+JOIN Owner ON Property.owner_name = Owner.owner_name
+JOIN Payment ON Property.id = Payment.prop_id
+GROUP BY Owner.owner_name
+HAVING COUNT(Property.id) > 3
+AND SUM(Payment.amount) > 0;
+
+
+Find the total amount earned from property transactions for each owner:
+
+SELECT Owner.owner_name, SUM(Transaction.amount) AS total_earnings
 FROM Owner
-LEFT JOIN Property ON Owner.owner_name = Property.owner_name
+JOIN Property ON Owner.owner_name = Property.owner_name
+JOIN Transaction ON Property.id = Transaction.prop_id
 GROUP BY Owner.owner_name;
 
-SELECT Property.id, Property.address, Property.price, Client.name AS client_name
-FROM Property
-LEFT JOIN Appointment ON Property.id = Appointment.property_id
-LEFT JOIN Client ON Appointment.client_id = Client.id;
+List the clients who have scheduled appointments for properties owned by a specific owner:
 
-SELECT Property.id, Property.address, COUNT(Appointment.id) AS total_appointments
-FROM Property
-LEFT JOIN Appointment ON Property.id = Appointment.property_id
-GROUP BY Property.id;
+SELECT DISTINCT Client.name, Client.email
+FROM Client
+JOIN Appointment ON Client.id = Appointment.client_id
+JOIN Property ON Appointment.property_id = Property.id
+WHERE Property.owner_name = 'owner_name_value';
 
-SELECT Property.id, Property.address, Property.price
+
+Retrieve the properties with their owners' details where the appointment date is in the future:
+
+SELECT Property.id, Property.address, Property.price, Owner.owner_name
 FROM Property
+JOIN Owner ON Property.owner_name = Owner.owner_name
 JOIN Appointment ON Property.id = Appointment.property_id
-WHERE Appointment.client_id = 'client_id_value';
+WHERE Appointment.appointment_date > CURRENT_DATE;
 
-SELECT Client.name, Client.email, Property.address, Transaction.amount, Transaction.transaction_date
+
+Find the top 5 clients who have made the highest total amount of transactions:
+
+SELECT Client.name, SUM(Transaction.amount) AS total_transactions
 FROM Client
 JOIN Transaction ON Client.id = Transaction.client_id
-JOIN Property ON Transaction.prop_id = Property.id;
+GROUP BY Client.name
+ORDER BY total_transactions DESC
+LIMIT 5;
 
-SELECT Property.property_type, AVG(Property.price) AS avg_price
-FROM Property
-GROUP BY Property.property_type;
 
-SELECT Property.id, Property.address, Transaction.amount, Transaction.transaction_date
-FROM Property
-JOIN Transaction ON Property.id = Transaction.prop_id
-GROUP BY Property.id
-ORDER BY Transaction.transaction_date DESC;
+Retrieve the properties booked by clients who have also booked other properties:
 
 SELECT Property.id, Property.address, Property.price
 FROM Property
-LEFT JOIN Appointment ON Property.id = Appointment.property_id
-WHERE Appointment.id IS NULL;
+JOIN Appointment ON Property.id = Appointment.property_id
+WHERE Appointment.client_id IN (
+    SELECT DISTINCT client_id
+    FROM Appointment
+    GROUP BY client_id
+    HAVING COUNT(property_id) > 1
+);
 
-SELECT Property.id, Property.address, Property.price, Appointment.appointment_date, Appointment.appointment_time
+
+List the properties booked by clients who have not made any transactions yet:
+
+SELECT Property.id, Property.address, Property.price
 FROM Property
 JOIN Appointment ON Property.id = Appointment.property_id
-WHERE Appointment.client_id = 'client_id_value';
+LEFT JOIN Transaction ON Appointment.client_id = Transaction.client_id
+WHERE Transaction.client_id IS NULL;
+
+
+Find the clients who have made transactions but haven't booked any appointments yet:
+
+SELECT Client.name, Client.email
+FROM Client
+JOIN Transaction ON Client.id = Transaction.client_id
+LEFT JOIN Appointment ON Client.id = Appointment.client_id
+WHERE Appointment.client_id IS NULL;
+
+Retrieve the properties listed by owners whose email domain is 'example.com':
+
+SELECT Property.id, Property.address, Property.price, Owner.owner_name, Owner.email
+FROM Property
+JOIN Owner ON Property.owner_name = Owner.owner_name
+WHERE Owner.email LIKE '%@example.com';
+
+
+List the appointments scheduled for properties of a specific type along with their property details:
+
+SELECT Appointment.appointment_date, Appointment.appointment_time, Property.address, Property.price
+FROM Appointment
+JOIN Property ON Appointment.property_id = Property.id
+WHERE Property.property_type = 'Villa';

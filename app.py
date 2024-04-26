@@ -469,7 +469,7 @@ def get_booked_properties():
     no_properties_booked = not bool(booked_properties)
     return render_template('booked_properties.html', booked_properties=booked_properties , no_properties_booked=no_properties_booked)
 
-# Add this route to your Flask application
+# Add this route to count appointment Flask
 @app.route('/appointment_count')
 def appointment_count():
     # Query to count the total number of appointments scheduled for each property
@@ -478,6 +478,60 @@ def appointment_count():
                         .group_by(Property.id, Property.address) \
                         .all()
     return render_template('appointment_count.html', appointment_counts=appointment_counts)
+
+
+
+# Route to display the form to input appointment date
+@app.route('/appointment_date_form')
+def appointment_date_form():
+    return render_template('appointment_date_form.html')
+
+# Route to display appointments count for properties on the specified date
+@app.route('/appointment_by_date', methods=['GET'])
+def appointment_by_date():
+    # Get the appointment date from the query parameters
+    appointment_date = request.args.get('appointment_date')
+    
+    # Convert the date string to a Python date object
+    try:
+        target_date = datetime.strptime(appointment_date, '%Y-%m-%d').date()
+    except ValueError:
+        return "Invalid date format. Please use YYYY-MM-DD format."
+
+    # Query to retrieve appointments scheduled for properties on the specified date
+    appointment_scheduled = db.session.query(Property.id, Property.address, Appointment.appointment_date , Appointment.client_name) \
+                        .join(Appointment, Property.id == Appointment.property_id) \
+                        .filter(Appointment.appointment_date == target_date) \
+                        .all()
+
+    return render_template('appointment_by_date.html', appointment_scheduled=appointment_scheduled, target_date=target_date)
+
+
+# Route to find properties not booked yet
+@app.route('/unbooked_properties')
+def unbooked_properties():
+    unbooked_props = Property.query.filter(~Property.id.in_(PropertyBooked.query.with_entities(PropertyBooked.pid))).all()
+    if not unbooked_props:
+        message = "All properties are booked."
+    else:
+        message = None
+    return render_template('unbooked_properties.html', unbooked_props=unbooked_props, message=message)
+
+
+# Add a new route to handle the query for owners listing more than 1 properties
+@app.route('/owners_with_multiple_properties')
+def owners_with_multiple_properties():
+    # Query to retrieve owner name, property ID, and property address for owners listing more than 1 properties
+    owners_properties = db.session.query(Owner.owner_name, Property.id, Property.address) \
+                        .join(Property, Owner.owner_name == Property.owner_name) \
+                        .group_by(Owner.owner_name) \
+                        .having(db.func.count(Property.id) >= 2) \
+                        .all()
+    
+    # Render the retrieved data in an HTML file
+    return render_template('owners_with_multiple_properties.html', owners_properties=owners_properties)
+
+
 
 
 if __name__ == '__main__':

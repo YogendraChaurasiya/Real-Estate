@@ -3,28 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Appointment Count</title>
+    <title>Owners with Multiple Properties</title>
 </head>
 <body>
-    <h1>Appointment Count for Each Property</h1>
-
-    
-
-    <h2>Output:</h2>
+    <h1>Owners with Multiple Properties</h1>
     <table border="1">
         <thead>
             <tr>
+                <th>Owner Name</th>
                 <th>Property ID</th>
-                <th>Address</th>
-                <th>Appointment Count</th>
+                <th>Property Address</th>
             </tr>
         </thead>
         <tbody>
-            {% for property_id, address, appointment_count in appointment_counts %}
+            {% for owner_name, property_id, property_address in owners_properties %}
             <tr>
+                <td>{{ owner_name }}</td>
                 <td>{{ property_id }}</td>
-                <td>{{ address }}</td>
-                <td>{{ appointment_count }}</td>
+                <td>{{ property_address }}</td>
             </tr>
             {% endfor %}
         </tbody>

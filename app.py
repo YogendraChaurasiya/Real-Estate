@@ -13,6 +13,7 @@ from flask import jsonify
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///real_estate.db'
 app.config['SECRET_KEY'] = 'your_secret_key'
+app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 
 UPLOAD_FOLDER = 'static/images'
@@ -146,7 +147,7 @@ def list_property():
             property_images = []
 
             # Process file uploads
-            for i in range(1, 7):
+            for i in range(1, 5):
                 file_key = 'property_image{}'.format(i)
                 if file_key in request.files:
                     file = request.files[file_key]
@@ -467,6 +468,17 @@ def get_booked_properties():
     # Check if there are no booked properties
     no_properties_booked = not bool(booked_properties)
     return render_template('booked_properties.html', booked_properties=booked_properties , no_properties_booked=no_properties_booked)
+
+# Add this route to your Flask application
+@app.route('/appointment_count')
+def appointment_count():
+    # Query to count the total number of appointments scheduled for each property
+    appointment_counts = db.session.query(Property.id, Property.address, db.func.count(Appointment.id).label('appointment_count')) \
+                        .outerjoin(Appointment, Property.id == Appointment.property_id) \
+                        .group_by(Property.id, Property.address) \
+                        .all()
+    return render_template('appointment_count.html', appointment_counts=appointment_counts)
+
 
 if __name__ == '__main__':
     with app.app_context():

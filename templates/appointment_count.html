@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Count</title>
+</head>
+<body>
+    <h1>Appointment Count for Each Property</h1>
+
+    <h2>SQL Query Syntax:</h2>
+    <pre>
+        SELECT p.id AS property_id, p.address, COUNT(a.id) AS appointment_count
+        FROM Property p
+        LEFT JOIN Appointment a ON p.id = a.property_id
+        GROUP BY p.id, p.address;
+    </pre>
+
+    <h2>Output:</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Property ID</th>
+                <th>Address</th>
+                <th>Appointment Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for property_id, address, appointment_count in appointment_counts %}
+            <tr>
+                <td>{{ property_id }}</td>
+                <td>{{ address }}</td>
+                <td>{{ appointment_count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

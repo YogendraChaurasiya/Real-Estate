@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 import secrets
 import string
+from sqlalchemy import func
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from datetime import time
@@ -518,20 +519,46 @@ def unbooked_properties():
     return render_template('unbooked_properties.html', unbooked_props=unbooked_props, message=message)
 
 
-# Add a new route to handle the query for owners listing more than 1 properties
+# Modify the route to fetch all properties for each owner with more than one property
 @app.route('/owners_with_multiple_properties')
 def owners_with_multiple_properties():
-    # Query to retrieve owner name, property ID, and property address for owners listing more than 1 properties
+    # Query to retrieve properties listed by owners who have more than 1 property
     owners_properties = db.session.query(Owner.owner_name, Property.id, Property.address) \
-                        .join(Property, Owner.owner_name == Property.owner_name) \
+                        .join(Owner, Property.owner_name == Owner.owner_name) \
                         .group_by(Owner.owner_name) \
                         .having(db.func.count(Property.id) >= 2) \
                         .all()
     
+    # Fetch all properties for each owner with more than one property
+    owners_properties_with_all = []
+    for owner_property in owners_properties:
+        owner_name, _, _ = owner_property
+        properties = Property.query.filter_by(owner_name=owner_name).all()
+        owners_properties_with_all.append((owner_name, properties))
+    
     # Render the retrieved data in an HTML file
-    return render_template('owners_with_multiple_properties.html', owners_properties=owners_properties)
+    return render_template('owners_with_multiple_properties.html', owners_properties=owners_properties_with_all)
 
 
+# query to display clients who booked more than one property 
+@app.route('/clients_with_multiple_bookings')
+def clients_with_multiple_bookings():
+    clients = db.session.query(Client).join(PropertyBooked, Client.id == PropertyBooked.cid).group_by(Client.id).having(func.count(PropertyBooked.id) > 1).all()
+    return render_template('clients_with_multiple_bookings.html', clients=clients)
+
+
+
+#query for client who have not booked any property yet
+@app.route('/clients_without_bookings')
+def clients_without_bookings():
+    clients = db.session.query(Client).outerjoin(PropertyBooked, Client.id == PropertyBooked.cid).filter(PropertyBooked.id == None).all()
+    return render_template('clients_without_bookings.html', clients=clients)
+
+#query for listing the property inw which price is > 100000
+@app.route('/expensive_properties')
+def expensive_properties():
+    properties = db.session.query(Property).filter(Property.price > 20000000).all()
+    return render_template('expensive_properties.html', properties=properties)
 
 
 if __name__ == '__main__':

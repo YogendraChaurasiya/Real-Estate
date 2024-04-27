@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Owners with Multiple Properties</title>
+    
 </head>
 <body>
     <h1>Owners with Multiple Properties</h1>
@@ -12,17 +13,24 @@
             <tr>
                 <th>Owner Name</th>
                 <th>Property ID</th>
-                <th>Property Address</th>
+                <th>Address</th>
             </tr>
         </thead>
         <tbody>
-            {% for owner_name, property_id, property_address in owners_properties %}
+            {% for owner_properties in owners_properties %}
+            {% set owner_name, properties = owner_properties %}
             <tr>
-                <td>{{ owner_name }}</td>
-                <td>{{ property_id }}</td>
-                <td>{{ property_address }}</td>
-            </tr>
+                <td rowspan="{{ properties|length }}">{{ owner_name }}</td>
+                {% for property in properties %}
+                {% if loop.index > 1 %}
+                <tr>
+                {% endif %}
+                <td>{{ property.id }}</td>
+                <td>{{ property.address }}</td>
+                </tr>
+                {% endfor %}
             {% endfor %}
+            </tr>
         </tbody>
     </table>
 </body>

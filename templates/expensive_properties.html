@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expensive Properties </title>
+</head>
+<body>
+    <h1>Expensive Properties Where Price is greater than 20000000</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Owner Name</th>
+                <th>Address</th>
+                <th>Property Name</th>
+                
+                <th>Property Size</th>
+                <th>Property Type</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for property in properties %}
+            <tr>
+                <td>{{ property.id }}</td>
+                <td>{{ property.owner_name }}</td>
+                <td>{{ property.address }}</td>
+                <td>{{ property.property_name }}</td>
+                
+                <td>{{ property.property_size }}</td>
+                <td>{{ property.property_type }}</td>
+                <td>{{ property.price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

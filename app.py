@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for , session , flash
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 import os
 import secrets
 import string
@@ -81,7 +82,7 @@ class PropertyBooked(db.Model):
     booked_date = db.Column(db.Date, nullable=False)
 
 
-class Transaction(db.Model):
+class Payment(db.Model):
     transaction_id = db.Column(db.String(10), primary_key=True, default=lambda: ''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(10)))
     prop_id = db.Column(db.Integer, db.ForeignKey('property.id'), nullable=False)
     client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=False)
@@ -331,13 +332,13 @@ def sell_property():
 
 # Define a function to send email to client
 def send_appointment_email(client_email, property_details):
-    msg = Message('Appointment Scheduled', sender='yogendrachaurasiya30@example.com', recipients=[client_email])
+    msg = Message('Appointment Scheduled', sender='yogendrachaurasiya30@gmail.com', recipients=[client_email])
     msg.body = f"Hello,\n\nYour property booking appointment for property located at {property_details['property_address']} has been scheduled.\n\nAppointment Date: {property_details['appointment_date']}\nAppointment Time: {property_details['appointment_time']}\n\nRegards,\nReal Estate Team"
     mail.send(msg)
     
 # Define a function to send appointment notification email to property owner
 def send_owner_appointment_email(owner_email, appointment_data):
-    msg = Message('New Appointment Scheduled', sender='yogendrachaurasiya30@example.com', recipients=[owner_email])
+    msg = Message('New Appointment Scheduled', sender='yogendrachaurasiya30@gmail.com', recipients=[owner_email])
     msg.body = f"Hello,\n\nA new appointment has been scheduled by {appointment_data['client_name']} for your property located at {appointment_data['property_address']}.\n\nAppointment Date: {appointment_data['appointment_date']}\nAppointment Time: {appointment_data['appointment_time']}\n\nClient Phone: {appointment_data['client_phone']}\n\nRegards,\nReal Estate Team"
     mail.send(msg)
 
@@ -450,8 +451,8 @@ def down_payment():
 
         amount = 10000
         
-        # Create a new Transaction instance
-        new_transaction = Transaction(prop_id=prop_id, client_id=client_id, amount=amount)
+        # Create a new Payment instance
+        new_transaction = Payment(prop_id=prop_id, client_id=client_id, amount=amount)
         db.session.add(new_transaction)
         db.session.commit()
 
@@ -470,96 +471,181 @@ def get_booked_properties():
     no_properties_booked = not bool(booked_properties)
     return render_template('booked_properties.html', booked_properties=booked_properties , no_properties_booked=no_properties_booked)
 
-# Add this route to count appointment Flask
-@app.route('/appointment_count')
-def appointment_count():
-    # Query to count the total number of appointments scheduled for each property
-    appointment_counts = db.session.query(Property.id, Property.address, db.func.count(Appointment.id).label('appointment_count')) \
-                        .outerjoin(Appointment, Property.id == Appointment.property_id) \
-                        .group_by(Property.id, Property.address) \
-                        .all()
-    return render_template('appointment_count.html', appointment_counts=appointment_counts)
-
-
-
-# Route to display the form to input appointment date
-@app.route('/appointment_date_form')
-def appointment_date_form():
-    return render_template('appointment_date_form.html')
-
-# Route to display appointments count for properties on the specified date
-@app.route('/appointment_by_date', methods=['GET'])
-def appointment_by_date():
-    # Get the appointment date from the query parameters
-    appointment_date = request.args.get('appointment_date')
-    
-    # Convert the date string to a Python date object
-    try:
-        target_date = datetime.strptime(appointment_date, '%Y-%m-%d').date()
-    except ValueError:
-        return "Invalid date format. Please use YYYY-MM-DD format."
-
-    # Query to retrieve appointments scheduled for properties on the specified date
-    appointment_scheduled = db.session.query(Property.id, Property.address, Appointment.appointment_date , Appointment.client_name) \
-                        .join(Appointment, Property.id == Appointment.property_id) \
-                        .filter(Appointment.appointment_date == target_date) \
-                        .all()
-
-    return render_template('appointment_by_date.html', appointment_scheduled=appointment_scheduled, target_date=target_date)
-
-
-# Route to find properties not booked yet
-@app.route('/unbooked_properties')
-def unbooked_properties():
-    unbooked_props = Property.query.filter(~Property.id.in_(PropertyBooked.query.with_entities(PropertyBooked.pid))).all()
-    if not unbooked_props:
-        message = "All properties are booked."
-    else:
-        message = None
-    return render_template('unbooked_properties.html', unbooked_props=unbooked_props, message=message)
-
-
-# Modify the route to fetch all properties for each owner with more than one property
-@app.route('/owners_with_multiple_properties')
-def owners_with_multiple_properties():
-    # Query to retrieve properties listed by owners who have more than 1 property
-    owners_properties = db.session.query(Owner.owner_name, Property.id, Property.address) \
-                        .join(Owner, Property.owner_name == Owner.owner_name) \
-                        .group_by(Owner.owner_name) \
-                        .having(db.func.count(Property.id) >= 2) \
-                        .all()
-    
-    # Fetch all properties for each owner with more than one property
-    owners_properties_with_all = []
-    for owner_property in owners_properties:
-        owner_name, _, _ = owner_property
-        properties = Property.query.filter_by(owner_name=owner_name).all()
-        owners_properties_with_all.append((owner_name, properties))
-    
-    # Render the retrieved data in an HTML file
-    return render_template('owners_with_multiple_properties.html', owners_properties=owners_properties_with_all)
-
-
-# query to display clients who booked more than one property 
-@app.route('/clients_with_multiple_bookings')
-def clients_with_multiple_bookings():
-    clients = db.session.query(Client).join(PropertyBooked, Client.id == PropertyBooked.cid).group_by(Client.id).having(func.count(PropertyBooked.id) > 1).all()
-    return render_template('clients_with_multiple_bookings.html', clients=clients)
-
-
-
-#query for client who have not booked any property yet
-@app.route('/clients_without_bookings')
-def clients_without_bookings():
-    clients = db.session.query(Client).outerjoin(PropertyBooked, Client.id == PropertyBooked.cid).filter(PropertyBooked.id == None).all()
-    return render_template('clients_without_bookings.html', clients=clients)
-
-#query for listing the property inw which price is > 100000
-@app.route('/expensive_properties')
-def expensive_properties():
-    properties = db.session.query(Property).filter(Property.price > 20000000).all()
-    return render_template('expensive_properties.html', properties=properties)
-
+@app.route('/admin')
+def admin_panel():
+    queries = [
+        ("Retrieve all properties along with their owners' details", db.session.execute(
+            text("""
+            SELECT Property.id, Property.address, Property.price, Owner.owner_name, Owner.email AS owner_email
+            FROM Property
+            JOIN Owner ON Property.owner_name = Owner.owner_name
+            """)
+        )),
+        ("Find the total number of properties listed by each owner:", db.session.execute(
+            text("""
+            SELECT Owner.owner_name, COUNT(Property.id) AS total_properties
+            FROM Owner
+            LEFT JOIN Property ON Owner.owner_name = Property.owner_name
+            GROUP BY Owner.owner_name
+            """)
+        )),
+        ("List properties along with the client's name who booked them, if booked", db.session.execute(
+            text("""
+            SELECT Property.id, Property.address, Property.price, Client.name AS client_name
+            FROM Property
+            LEFT JOIN Appointment ON Property.id = Appointment.property_id
+            LEFT JOIN Client ON Appointment.client_id = Client.id
+            """)
+        )),
+        ("Find the total number of appointments scheduled for each property", db.session.execute(
+            text("""
+            SELECT Property.id, Property.address, COUNT(Appointment.id) AS total_appointments
+            FROM Property
+            LEFT JOIN Appointment ON Property.id = Appointment.property_id
+            GROUP BY Property.id
+            """)
+        )),
+        ("Retrieve the properties booked by a specific client", db.session.execute(
+            text("""
+            SELECT Property.id, Property.address, Property.price
+            FROM Property
+            JOIN Appointment ON Property.id = Appointment.property_id
+            WHERE Appointment.client_id = 'H7ND6X'
+            """)
+        )),
+        ("List the clients who have made down payments, along with the property details", db.session.execute(
+            text("""
+            SELECT Client.name, Client.email, Property.address, Payment.amount, Payment.transaction_date
+            FROM Client
+            JOIN Payment ON Client.id = Payment.client_id
+            JOIN Property ON Payment.prop_id = Property.id
+            """)
+        )),
+        ("Find the average price of properties of each type", db.session.execute(
+            text("""
+            SELECT Property.property_type, AVG(Property.price) AS avg_price
+            FROM Property
+            GROUP BY Property.property_type
+            """)
+        )),
+        ("Retrieve the details of the latest transaction made for each property", db.session.execute(
+            text("""
+            SELECT Property.id, Property.address, Payment.amount, Payment.transaction_date
+            FROM Property
+            JOIN Payment ON Property.id = Payment.prop_id
+            GROUP BY Property.id
+            ORDER BY Payment.transaction_date DESC
+            """)
+        )),
+        ("List the properties that have not been booked yet", db.session.execute(
+            text("""
+            SELECT Property.id, Property.address, Property.price
+            FROM Property
+            LEFT JOIN Appointment ON Property.id = Appointment.property_id
+            WHERE Appointment.id IS NULL
+            """)
+        )),
+        ("Find the properties booked by a specific client along with the appointment details", db.session.execute(
+            text("""
+            SELECT Property.id, Property.address, Property.price, Appointment.appointment_date, Appointment.appointment_time
+            FROM Property
+            JOIN Appointment ON Property.id = Appointment.property_id
+            WHERE Appointment.client_id = 'JPTCTQ'
+            """)
+        )),
+        ("Retrieve the properties listed by owners who have more than 3 properties listed", db.session.execute(
+            text("""
+            SELECT Property.id, Property.address, Property.price, Owner.owner_name
+            FROM Property
+            JOIN Owner ON Property.owner_name = Owner.owner_name
+            GROUP BY Owner.owner_name
+            HAVING COUNT(Property.id) > 3
+            """)
+        )),
+        ("Retrieve the properties listed by owners who have more than 3 properties listed and have made at least 1 down payment", db.session.execute(
+            text("""
+            SELECT Property.id, Property.address, Property.price, Owner.owner_name 
+            FROM Property
+            JOIN Owner ON Property.owner_name = Owner.owner_name
+            JOIN Payment ON Property.id = Payment.prop_id
+            GROUP BY Owner.owner_name
+            HAVING COUNT(Property.id) > 3
+            AND SUM(Payment.amount) > 0
+            """)
+        )),
+        ("Find the total amount earned from property transactions for each owner", db.session.execute(
+            text("""
+            SELECT Owner.owner_name, SUM(Payment.amount) AS total_earnings
+            FROM Owner
+            JOIN Property ON Owner.owner_name = Property.owner_name
+            JOIN Payment ON Property.id = Payment.prop_id
+            GROUP BY Owner.owner_name
+            """)
+        )),
+        ("List the clients who have scheduled appointments for properties owned by a specific owner", db.session.execute(
+            text("""
+            SELECT DISTINCT Client.name, Client.email
+            FROM Client
+            JOIN Appointment ON Client.id = Appointment.client_id
+            JOIN Property ON Appointment.property_id = Property.id
+            WHERE Property.owner_name = 'owner_name_value'
+            """)
+        )),
+        ("Retrieve the properties with their owners' details where the appointment date is in the future", db.session.execute(
+            text("""
+            SELECT Property.id, Property.address, Property.price, Owner.owner_name
+            FROM Property
+            JOIN Owner ON Property.owner_name = Owner.owner_name
+            JOIN Appointment ON Property.id = Appointment.property_id
+            WHERE Appointment.appointment_date > CURRENT_DATE
+            """)
+        )),
+        ("Find the top 5 clients who have made the highest total amount of transactions", db.session.execute(
+            text("""
+            SELECT Client.name, SUM(Payment.amount) AS total_transactions
+            FROM Client
+            JOIN Payment ON Client.id = Payment.client_id
+            GROUP BY Client.name
+            ORDER BY total_transactions DESC
+            LIMIT 5
+            """)
+        )),
+        ("List the properties booked by clients who have not made any transactions yet", db.session.execute(
+            text("""
+            SELECT Property.id, Property.address, Property.price
+            FROM Property
+            JOIN Appointment ON Property.id = Appointment.property_id
+            LEFT JOIN Payment ON Appointment.client_id = Payment.client_id
+            WHERE Payment.client_id IS NULL
+            """)
+        )),
+        ("Find the clients who have made transactions but haven't booked any appointments yet", db.session.execute(
+            text("""
+            SELECT Client.name, Client.email
+            FROM Client
+            JOIN Payment ON Client.id = Payment.client_id
+            LEFT JOIN Appointment ON Client.id = Appointment.client_id
+            WHERE Appointment.client_id IS NULL
+            """)
+        )),
+        ("Retrieve the properties listed by owners whose email domain is 'example.com'", db.session.execute(
+            text("""
+            SELECT Property.id, Property.address, Property.price, Owner.owner_name, Owner.email
+            FROM Property
+            JOIN Owner ON Property.owner_name = Owner.owner_name
+            WHERE Owner.email LIKE '%@gmail.com'
+            """)
+        )),
+        ("List the appointments scheduled for properties of a specific type along with their property details", db.session.execute(
+            text("""
+            SELECT Appointment.appointment_date, Appointment.appointment_time, Property.address, Property.price
+            FROM Appointment
+            JOIN Property ON Appointment.property_id = Property.id
+            WHERE Property.property_type = 'Villa'
+            """)
+        )),
+    ]
+    return render_template('admin.html', queries=queries)
 
 if __name__ == '__main__':
     with app.app_context():

@@ -46,23 +46,7 @@
         <img src="{{ url_for('static', filename='/images/big_img.png')}}" alt="" class="main-image">
         <div class="img-text">
           <h1 class="text">LUXURY VILLA <br>MINUTES <br>FROM THE BAY</h1>
-          <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="showQueriesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-              Show Queries
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="showQueriesDropdown">
-              <li><a class="dropdown-item" href="/booked_properties">Option 1</a></li>
-              <li><a class="dropdown-item" href="/unbooked_properties">Option 2</a></li>
-              <li><a class="dropdown-item" href="/appointment_count">Option 3</a></li>
-              <li><a class="dropdown-item" href="/appointment_date_form">Option 4</a></li>
-              <li><a class="dropdown-item" href="/owners_with_multiple_properties">Option 5</a></li>
-              <li><a class="dropdown-item" href="/clients_with_multiple_bookings">Option 6</a></li>
-              <li><a class="dropdown-item" href="/clients_without_bookings">Option 7</a></li>
-              <li><a class="dropdown-item" href="/expensive_properties">Option 8</a></li>
-              <li><a class="dropdown-item" href="/booked_properties">Option 9</a></li>
-              <li><a class="dropdown-item" href="/booked_properties">Option 10</a></li>
-            </ul>
-          </div>
+          <button><a href="/admin" id="Queries">Show Queries</a></button>
         </div>
       </div>
 

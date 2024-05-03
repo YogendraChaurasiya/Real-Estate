@@ -132,27 +132,6 @@
       </div>
       
     </footer>
-
-    <script>
-        // Function to show the buttons after 1 hour of the appointment time
-        function showButtons() {
-            document.getElementById('bookPropertyBtn').style.display = 'inline-block';
-            document.getElementById('payamountBtn').style.display = 'inline-block';
-        }
-
-        // Get the appointment date and time
-        var appointmentDate = new Date('{{ appointment_date }}');
-        var appointmentTime = '{{ property.appointment_time }}';
-
-        // Convert the appointment time to milliseconds
-        var appointmentDateTime = new Date(appointmentDate.getFullYear(), appointmentDate.getMonth(), appointmentDate.getDate(), parseInt(appointmentTime.split(':')[0]), parseInt(appointmentTime.split(':')[1]), 0);
-
-        // Calculate the time after 1 hour of the appointment
-        var oneHourAfterAppointment = new Date(appointmentDateTime.getTime() + (1 * 60 * 60 * 1000));
-
-        // Set a timeout to call showButtons() after 1 hour of the appointment time
-        setTimeout(showButtons, oneHourAfterAppointment - Date.now());
-    </script>
 </body>
 </html>
  

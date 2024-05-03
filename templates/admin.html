@@ -1,3 +1,4 @@
+<!-- admin.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,31 +9,34 @@
 <body>
     <h1>Admin Panel</h1>
 
-    <h2>SQL Queries</h2>
-    <ul>
-        {% for query_desc, result in queries %}
-            <li>
-                <strong>{{ query_desc }}</strong>
-                <table border="1">
-                    <thead>
-                        <tr>
-                            {% for column in result.keys() %}
-                                <th>{{ column }}</th>
-                            {% endfor %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for row in result %}
-                            <tr>
-                                {% for value in row %}
-                                    <td>{{ value }}</td>
-                                {% endfor %}
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </li>
-        {% endfor %}
-    </ul>
+    <!-- Filter Form -->
+    <form action="{{ url_for('filter_data') }}" method="post">
+        <label for="table_name">Select Table:</label>
+        <select name="table_name" id="table_name">
+            <option value="Client">Client</option>
+            <option value="Owner">Owner</option>
+            <option value="Property">Property</option>
+            <option value="Appointment">Appointment</option>
+            <option value="Payment">Payment</option>
+            <option value="PropertyBooked">PropertyBooked</option>
+        </select>
+        <label for="filter_criteria">Filter Criteria:</label>
+        <input type="text" name="filter_criteria" id="filter_criteria">
+        <button type="submit">Apply Filter</button>
+    </form>
+
+    <!-- Display Table Data -->
+    <h2>Clients</h2>
+    <table>
+        <!-- Display client data here -->
+    </table>
+
+    <h2>Owners</h2>
+    <table>
+        <!-- Display owner data here -->
+    </table>
+
+    <!-- Repeat for other tables -->
+
 </body>
 </html>

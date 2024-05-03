@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index_css.css') }}" />
+    <!--Google Font-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;800&family=Ubuntu&display=swap" rel="stylesheet">
+    <!--Bootstrap CDN-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js" integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N" crossorigin="anonymous"></script>
+    <!--Font Awesome CDN-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+    <script defer src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" integrity="sha384-rOA1PnstxnOBLzCLMcre8ybwbTmemjzdNlILg8O7z1lUkLXozs4DHonlDtnE7fpc" crossorigin="anonymous"></script>
+    <!-- Bootstrap Script -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.min.js" integrity="sha384-heAjqF+bCxXpCWLa6Zhcp4fu20XoNIA98ecBC1YkdXhszjoejr5y9Q77hIrv8R9i" crossorigin="anonymous"></script>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Client Page</title>
+</head>
+<body>
+    <h1>Welcome, {{ client.name }}</h1>
+
+    <h2>Your Information:</h2>
+    <ul>
+        <li>Name: {{ client.name }}</li>
+        <li>Email: {{ client.email }}</li>
+        <li>Phone: {{ client.phone }}</li>
+    </ul>
+
+    <h2>Your Scheduled Appointments:</h2>
+<ul>
+    {% for appointment, property, property_booking in appointments %}
+    <li>
+        
+        <!-- <strong>Property Details:</strong><br> -->
+        {% if property %}
+            {% for i in range(1, 5) %}
+                {% set image_attr = 'image' ~ i %}
+                {% if getattr(property, image_attr) %}
+                    <img src="{{ getattr(property, image_attr) }}" alt="Property Image"><br>
+                {% endif %}
+            {% endfor %}
+            <strong>Property Name:</strong> {{ property.property_name }}<br>
+            <strong>Property Address:</strong> {{ property.address }}<br>
+            <strong>Property Description:</strong> {{ property.property_description }}<br>
+            <strong>Property Type:</strong> {{ property.property_type }}<br>
+            <strong>Price:</strong> {{ property.price }}<br>
+            <strong>Appointment Date:</strong> {{ appointment.appointment_date }}<br>
+            <strong>Appointment Time:</strong> {{ appointment.appointment_time }}<br>
+            {% if property_booking %}
+                <strong>Booking Status:</strong> Booked<br>
+                <strong>Booking Date:</strong> {{ property_booking.booked_date }}<br>
+            {% else %}
+                <strong>Booking Status:</strong> Not Booked<br>
+            {% endif %}
+            
+            
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+    <!-- JavaScript to hide "Your Owned Properties" section if no properties are owned -->
+    <h2 id="ownedPropertiesTitle">Your Owned Properties:</h2>
+    <ul id="ownedPropertiesList">
+        <ul>
+            {% for owned_property in owned_properties %}
+            <li>
+                {% for i in range(1, 5) %}
+                    {% set image_attr = 'image' ~ i %}
+                    {% if owned_property[image_attr] %}
+                        <img src="{{ owned_property[image_attr] }}" alt="Property Image">
+                    {% endif %}
+                {% endfor %}
+                Property Name: {{ owned_property.property_name }}<br>
+                Property Address: {{ owned_property.address }}<br>
+                Property Type: {{ owned_property.property_type }}<br>
+                Price: {{ owned_property.price }}<br>
+                
+            </li>
+            {% endfor %}
+        </ul>
+    </ul>
+
+    <script>
+        // Get the number of owned properties
+        var numOwnedProperties = {{ owned_properties | length }};
+
+        // Check if the client owns any properties
+        if (numOwnedProperties === 0) {
+            // Hide the "Your Owned Properties" section
+            document.getElementById("ownedPropertiesTitle").style.display = "none";
+            document.getElementById("ownedPropertiesList").style.display = "none";
+            
+            // Display message indicating no owned properties
+            var noOwnedPropertiesMessage = document.createElement("h2");
+            noOwnedPropertiesMessage.textContent = "You do not own any property";
+            document.body.appendChild(noOwnedPropertiesMessage);
+        }
+    </script>
+</body>
+</html>

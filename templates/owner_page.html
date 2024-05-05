@@ -1,3 +1,4 @@
+<!-- owner_page.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,10 +31,10 @@
                 <li><a href="/properties">PROPERTIES</a></li>
                 <!-- <li><a href="#testimonials">Testimonials</a></li> -->
                 <li><a href="#footer">CONTACT</a></li>
-                {% if 'user_id' in session %}
+                {% if 'owner_id' in session %}
                 <li><a href="/logout">LOGOUT</a></li>
                 {% else %}
-                <li><a href="/client_login">LOGIN</a></li>
+                <li><a href="/owner_login">LOGIN</a></li>
                 {% endif %}
             </ul>
         </nav>
@@ -44,8 +45,8 @@
         <div class="left-section" style="float: left; width: 20%;">
             <div class="profile-container">
                 <div class="profile-image">
-                    {% if owner.photo %}
-                        <img src="{{ url_for('static', filename='/images/user.png') }}" alt="Profile Image">
+                    {% if owner_photo %}
+                        <img src="{{ owner_photo }}" alt="Profile Image">
                     {% else %}
                         <img src="{{ url_for('static', filename='/images/user.png') }}" alt="Profile Image">    
                     {% endif %}
@@ -56,6 +57,7 @@
                     <p>Phone: {{ owner.phone }}</p>
                 </div>
                 <div class="nav-links">
+                    <li><a href="/sell_property">Sell Your Property</a></li>
                     <li><a href="#scheduledProperty">Your Properties</a></li>
                     <li><a href="#ownedProperties">Sold Properties</a></li>
                 </div>
@@ -65,6 +67,7 @@
 
         <!-- Right Section: Display Area -->
         <div class="right-section" style="float: left; width: 80%;">
+
             <div id="scheduledProperty" style="display: block;">
                 <!-- Display scheduled appointments here -->
                 <h2 class="text-center mb-5" style="font-weight: bolder;">Your Properties</h2>

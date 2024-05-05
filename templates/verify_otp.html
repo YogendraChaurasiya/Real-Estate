@@ -1,4 +1,3 @@
-<!-- client_login.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,29 +20,18 @@
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Client Login</title>
+    <title>Verify OTP</title>
 </head>
 <body>
     <div class="form-container">
-        <p class="title">Login</p>
-        <form method="POST" action="{{ url_for('client_login') }}" class="form">
+        <p class="title">Verify OTP</p>
+        <form method="POST" action="{{ url_for('verify_otp') }}" class="form">
             <div class="input-group">
-                <label for="email">Email</label>
-                <input type="email" name="email" id="username" placeholder="">
+                <label for="otp">Enter OTP</label>
+                <input type="text" name="otp" id="otp" placeholder="" maxlength="4" required>
             </div>
-            <div class="input-group">
-                <label for="password">Password</label>
-                <input type="password" name="password" id="password" placeholder="">
-                <div class="forgot">
-                    <a rel="noopener noreferrer" href="{{ url_for('forgot_password') }}">Forgot Password ?</a>
-                </div>
-            </div>
-            <input type="submit" value="Login" class="sign">
+            <input type="submit" value="Verify OTP" class="sign">
         </form>
-        <p class="signup">Don't have an account?
-            <a rel="noopener noreferrer" href="{{ url_for('client_signup') }}" class="">Sign up</a>
-        </p>
     </div>
 </body>
 </html>
-

@@ -32,7 +32,7 @@ h6 {
   font-family: "Ubuntu", sans-serif;
   font-size: 1.5rem;
   line-height: 0.8;
-  margin-left: -7%;
+  margin-left: -5%;
   color: #323644;
   text-decoration: none;
   /* font-weight: bolder; */
@@ -42,11 +42,15 @@ h6 {
   list-style-type: none;
   display: flex;
   margin-right: 20%;
+  margin-top: 18px; /* Adjust margin-top to center nav items vertically */
+  margin-bottom: 0; /* Remove margin-bottom */
+  justify-content: center; /* Center align nav items */
   align-items: flex-start; /* Align items to the start */
+  font-size: large;
 }
 
 .nav-items li {
-  margin-right: 33px;
+  margin-right: 25px;
   padding: 10px 0;
 }
 
@@ -65,9 +69,57 @@ h6 {
 
 .navbar img {
   margin-left: 20%;
-  margin-right: 90px;
+  margin-right: 0;
   width: auto;
   padding: 0;
+}
+
+/* CSS for User Dropdown */
+.profile-dropdown {
+  position: relative;
+  display: inline-block;
+  margin-top: 10px; /* Adjust margin-top to align profile image vertically */
+  margin-right: 20px; /* Adjust margin-right to create space between nav-brand and profile image */
+}
+
+.profile-image {
+  margin-top: -22px;
+  width: auto;
+  height: 35px; /* Set the height to match nav-brand */
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.dropdown-btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 120px;
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  z-index: 1;
+  border-radius: 5px;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+}
+
+.user-dropdown:hover .dropdown-content {
+  display: block;
 }
 
 /* ----------------------------- IMAGE CONTAIENR ---------------------------- */

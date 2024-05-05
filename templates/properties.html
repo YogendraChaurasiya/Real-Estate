@@ -25,19 +25,28 @@
   <body>
     <header>
       <nav class="navbar">
-        <img src="{{url_for('static', filename='/images/logo.png')}}" alt="Logo" height="50rem" width="25rem" / >
+        <img src="{{url_for('static', filename='/images/logo.png')}}" alt="Logo" height="50rem" width="25rem" />
         <a href="/" class="nav-brand">COLTON <br> PROPERTIES</a>
         <ul class="nav-items">
             <li><a href="/">HOME</a></li>
-            <li><a href="#properties">PROPERTIES</a></li>
+            <li><a href="/properties">PROPERTIES</a></li>
             <!-- <li><a href="#testimonials">Testimonials</a></li> -->
             <li><a href="#footer">CONTACT</a></li>
+            <li><a href="/owner_login" class="sell-property" style="color: blue;">SELL YOUR PROPERTY</a></li>
             {% if 'user_id' in session %}
-            <li><a href="/logout">LOGOUT</a></li>
+            <li class="user-dropdown">
+                <div class="profile-dropdown">
+                    <img src="{{ client.photo if client.photo else url_for('static', filename='/images/default_profile.jpg') }}" alt="Profile Image" class="profile-image">
+                    <div class="dropdown-content">
+                        <a href="/client_page">Profile</a>
+                        <a href="/logout">Logout</a>
+                    </div>
+                </div>
+            </li>
             {% else %}
             <li><a href="/client_login">LOGIN</a></li>
             {% endif %}
-            <li><a href="/owner_login" class="sell-property"style="color: blue;">SELL YOUR PROPERTY</a></li>
+            
         </ul>
       </nav>
       

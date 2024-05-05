@@ -11,8 +11,9 @@ from datetime import time
 from flask_mail import Mail, Message
 import secrets
 from flask import jsonify
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 import pytz
+import random
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///real_estate.db'
@@ -128,8 +129,24 @@ def index():
         properties = properties.filter(Property.address.ilike(f'%{address}%'))
 
     properties = properties.all()
+    #Check if the user is logged in
+    if 'user_id' in session:
+        # If user is logged in, get the client details from the database
+        client = Client.query.get(session['user_id'])
+    else:
+        # If user is not logged in, set client to None
+        client = None
+        
+    # Check if the owner is logged in
+    if 'owner_id' in session:
+        # If owner is logged in, get the owner details from the database
+        owner = Owner.query.get(session['owner_id'])
+    else:
+        # If owner is not logged in, set owner to None
+        owner = None
 
-    return render_template('index.html', properties=properties)
+    # Pass properties and client to the template context
+    return render_template('index.html', properties=properties, client=client, owner=owner)
 
 @app.route('/property/<int:id>')
 def property_details(id):
@@ -140,7 +157,16 @@ def property_details(id):
 def properties():
     # Fetch properties data as needed
     properties = Property.query.all()
-    return render_template('properties.html', properties=properties)
+    #Check if the user is logged in
+    if 'user_id' in session:
+        # If user is logged in, get the client details from the database
+        client = Client.query.get(session['user_id'])
+    else:
+        # If user is not logged in, set client to None
+        client = None
+
+    # Pass properties and client to the template context
+    return render_template('properties.html', properties=properties, client=client)
 
 @app.route('/list_property', methods=['POST'])
 def list_property():
@@ -188,7 +214,7 @@ def list_property():
             return redirect(url_for('index'))
         else:
             return "Owner not found!"
-    return render_template('index.html')
+    return render_template('owner_page.html')
 
 @app.route('/search', methods=['POST'])
 def search_properties():
@@ -274,13 +300,21 @@ def owner_signup():
             # Owner already exists, redirect to owner login page
             return redirect(url_for('owner_login'))
         else:
-            new_owner = Owner(owner_name=owner_name, email=email, password=password, phone=phone)
+            # Process photo upload
+            if 'photo' in request.files:
+                photo = request.files['photo']
+                photo_path = 'static/images/' + photo.filename
+                photo.save(photo_path)
+            else:
+                photo_path = None
+            
+            new_owner = Owner(owner_name=owner_name, email=email, password=password, phone=phone, photo=photo_path)
             db.session.add(new_owner)
             db.session.commit()
             # Store owner_id in session after successful signup
             session['owner_id'] = new_owner.id
             # Redirect to index page after successful signup
-            return redirect(url_for('sell_property'))
+            return redirect(url_for('owner_page'))
     return render_template('owner_signup.html')
 
 # Add routes for client and owner login
@@ -305,6 +339,66 @@ def client_login():
             return redirect(url_for('client_signup'))
     return render_template('client_login.html')
 
+# Generate OTP
+def generate_otp(length=4):
+    return ''.join(random.choices(string.digits, k=length))
+
+@app.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form['email']
+        client = Client.query.filter_by(email=email).first()
+        if client:
+            otp = generate_otp()
+            
+            # Send OTP to the registered email
+            msg = Message('Password Reset OTP', sender='yogendrachaurasiya30@gmail.com', recipients=[email])
+            msg.body = f'Your OTP for password reset is: {otp}'
+            mail.send(msg)
+
+            # Store the OTP and client ID in session
+            session['otp'] = otp
+            session['client_id'] = client.id
+
+            # Redirect to the OTP verification page
+            return redirect(url_for('verify_otp'))
+        else:
+            flash("Email ID not registered.")
+            return redirect(url_for('client_signup'))
+    return render_template('forgot_password.html')
+
+@app.route('/verify_otp', methods=['GET', 'POST'])
+def verify_otp():
+    if 'otp' not in session:
+        return redirect(url_for('client_login'))
+
+    if request.method == 'POST':
+        entered_otp = request.form['otp']
+        if entered_otp == session['otp']:
+            return redirect(url_for('change_password'))
+        else:
+            flash("Wrong OTP. Please try again.")
+            return redirect(url_for('verify_otp'))
+    
+    return render_template('verify_otp.html')
+
+@app.route('/change_password', methods=['GET', 'POST'])
+def change_password():
+    if 'client_id' not in session:
+        return redirect(url_for('client_login'))
+
+    client_id = session['client_id']
+    client = Client.query.get(client_id)
+
+    if request.method == 'POST':
+        new_password = request.form['password']
+        client.password = new_password
+        db.session.commit()
+        flash("Password updated successfully. Please login with your new password.")
+        return redirect(url_for('client_login'))
+
+    return render_template('change_password.html')
+
 @app.route('/owner_login', methods=['GET', 'POST'])
 def owner_login():
     if request.method == 'POST':
@@ -317,7 +411,7 @@ def owner_login():
             if owner.password == password:
                 # Owner exists and password matches, store owner_id in session and redirect to index page
                 session['owner_id'] = owner.id
-                return redirect(url_for('sell_property'))
+                return redirect(url_for('owner_page'))
             else:
                 flash("Incorrect email or password.")
                 return redirect(url_for('owner_login'))
@@ -325,6 +419,62 @@ def owner_login():
             # Owner does not exist, redirect to owner signup page
             return redirect(url_for('owner_signup'))
     return render_template('owner_login.html')
+
+@app.route('/owner_forgot_password', methods=['GET', 'POST'])
+def owner_forgot_password():
+    if request.method == 'POST':
+        email = request.form['email']
+        owner = Owner.query.filter_by(email=email).first()
+        if owner:
+            otp = generate_otp()
+            
+            # Send OTP to the registered email
+            msg = Message('Password Reset OTP', sender='yogendrachaurasiya30@gmail.com', recipients=[email])
+            msg.body = f'Your OTP for password reset is: {otp}'
+            mail.send(msg)
+
+            # Store the OTP and owner ID in session
+            session['otp'] = otp
+            session['owner_id'] = owner.id
+
+            # Redirect to the OTP verification page
+            return redirect(url_for('owner_verify_otp'))
+        else:
+            flash("Email ID not registered.")
+            return redirect(url_for('owner_signup'))
+    return render_template('owner_forgot_password.html')
+
+@app.route('/owner_verify_otp', methods=['GET', 'POST'])
+def owner_verify_otp():
+    if 'otp' not in session:
+        return redirect(url_for('owner_login'))
+
+    if request.method == 'POST':
+        entered_otp = request.form['otp']
+        if entered_otp == session['otp']:
+            return redirect(url_for('owner_change_password'))
+        else:
+            flash("Wrong OTP. Please try again.")
+            return redirect(url_for('owner_verify_otp'))
+    
+    return render_template('owner_verify_otp.html')
+
+@app.route('/owner_change_password', methods=['GET', 'POST'])
+def owner_change_password():
+    if 'owner_id' not in session:
+        return redirect(url_for('owner_login'))
+
+    owner_id = session['owner_id']
+    owner = Owner.query.get(owner_id)
+
+    if request.method == 'POST':
+        new_password = request.form['password']
+        owner.password = new_password
+        db.session.commit()
+        flash("Password updated successfully. Please login with your new password.")
+        return redirect(url_for('owner_login'))
+
+    return render_template('owner_change_password.html')
 
 @app.route('/logout')
 def logout():
@@ -572,6 +722,8 @@ def owner_page():
     owner_id = session['owner_id']
     owner = Owner.query.get(owner_id)
 
+    # Fetch owner's photo
+    owner_photo = owner.photo if owner.photo else None
     # Fetch owner's properties
     owner_properties = Property.query.filter_by(owner_name=owner.owner_name).all()
 
@@ -594,8 +746,77 @@ def owner_page():
     # Pass the Client model to the template context
     return render_template('owner_page.html', owner=owner, owner_properties=owner_properties,
                            owner_appointments=owner_appointments, booked_properties=booked_properties,
-                           sold_properties=sold_properties, Client=Client)
+                           sold_properties=sold_properties, Client=Client, owner_photo=owner_photo)
 
+@app.route('/admin_login', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        
+        # Check if the provided username and password match the fixed admin credentials
+        if username == 'admin' and password == '123':
+            # For demonstration purposes, I'm using fixed credentials.
+            # In practice, you should securely store and compare passwords.
+            
+            # Store admin id in session after successful login
+            session['admin_id'] = 1  # You can set any unique identifier for the admin
+            return redirect(url_for('admin_dashboard'))
+        else:
+            flash("Incorrect username or password.")
+            return redirect(url_for('admin_login'))
+    return render_template('admin_login.html')
+
+@app.route('/admin_dashboard', methods=['GET', 'POST'])
+def admin_dashboard():
+    # Check if admin is logged in
+    if 'admin_id' not in session:
+        return redirect(url_for('admin_login'))
+    
+    properties = Property.query.all()
+
+    if request.method == 'POST':
+        # Check if the form submitted is for appointments or clients
+        if 'submit_type' in request.form:
+            submit_type = request.form['submit_type']
+            if submit_type == 'appointments':
+                # Get the selected date and property name input from the form for appointments
+                selected_date = request.form['date']
+                property_name = request.form['property_name']
+                
+                # Query the database to fetch all appointments for the input date and property name
+                appointments = db.session.query(Appointment, Property).join(Property).filter(Appointment.appointment_date == selected_date, Property.property_name == property_name).all()
+                
+                return render_template('admin_dashboard.html', appointments=appointments, selected_date=selected_date, properties=properties)
+            elif submit_type == 'clients':
+                # Get the property name selected by the admin for clients
+                property_name = request.form['property_name']
+                
+                # Query the database to fetch all clients who booked the selected property
+                property_id = Property.query.filter_by(property_name=property_name).first().id
+                booked_clients = PropertyBooked.query.filter_by(pid=property_id).all()
+                
+                # Extract client ids
+                client_ids = [booked_client.cid for booked_client in booked_clients]
+                
+                # Query the database to fetch client details
+                clients = Client.query.filter(Client.id.in_(client_ids)).all()
+                
+                return render_template('admin_dashboard.html', clients=clients, selected_property=property_name, properties=properties)
+            elif submit_type == 'filter_appointments':
+                # Get the number of days input from the form
+                num_days = int(request.form['num_days'])
+                
+                # Calculate the start date for filtering appointments
+                start_date = date.today() - timedelta(days=num_days)
+                
+                # Query the database to fetch appointments scheduled in the last N days
+                filtered_appointments = db.session.query(Appointment, Property).join(Property).filter(Appointment.appointment_date >= start_date).all()
+                
+                return render_template('admin_dashboard.html', filtered_appointments=filtered_appointments, num_days=num_days, properties=properties)
+
+    # If it's a GET request or no form is submitted yet, render the admin dashboard template
+    return render_template('admin_dashboard.html', appointments=None, clients=None, selected_date=None, selected_property=None, properties=properties)
 
 
 # @app.route('/admin')
@@ -773,69 +994,6 @@ def owner_page():
 #         )),
 #     ]
 #     return render_template('admin.html', queries=queries)
-
-@app.route('/admin_login', methods=['GET', 'POST'])
-def admin_login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        
-        # Check if the provided username and password match the fixed admin credentials
-        if username == 'admin' and password == '123':
-            # For demonstration purposes, I'm using fixed credentials.
-            # In practice, you should securely store and compare passwords.
-            
-            # Store admin id in session after successful login
-            session['admin_id'] = 1  # You can set any unique identifier for the admin
-            return redirect(url_for('admin_dashboard'))
-        else:
-            flash("Incorrect username or password.")
-            return redirect(url_for('admin_login'))
-    return render_template('admin_login.html')
-
-# Define a route for the admin dashboard
-from flask import request
-
-@app.route('/admin_dashboard', methods=['GET', 'POST'])
-def admin_dashboard():
-    # Check if admin is logged in
-    if 'admin_id' not in session:
-        return redirect(url_for('admin_login'))
-    
-    properties = Property.query.all()
-
-    if request.method == 'POST':
-        # Check if the form submitted is for appointments or clients
-        if 'submit_type' in request.form:
-            submit_type = request.form['submit_type']
-            if submit_type == 'appointments':
-                # Get the date and property name input from the form for appointments
-                date = request.form['date']
-                property_name = request.form['property_name']
-                
-                # Query the database to fetch all appointments for the input date and property name
-                appointments = db.session.query(Appointment, Property).join(Property).filter(Appointment.appointment_date == date, Property.property_name == property_name).all()
-                
-                return render_template('admin_dashboard.html', appointments=appointments, selected_date=date, properties=properties)
-            elif submit_type == 'clients':
-                # Get the property name selected by the admin for clients
-                property_name = request.form['property_name']
-                
-                # Query the database to fetch all clients who booked the selected property
-                property_id = Property.query.filter_by(property_name=property_name).first().id
-                booked_clients = PropertyBooked.query.filter_by(pid=property_id).all()
-                
-                # Extract client ids
-                client_ids = [booked_client.cid for booked_client in booked_clients]
-                
-                # Query the database to fetch client details
-                clients = Client.query.filter(Client.id.in_(client_ids)).all()
-                
-                return render_template('admin_dashboard.html', clients=clients, selected_property=property_name, properties=properties)
-
-    # If it's a GET request or no form is submitted yet, render the admin dashboard template
-    return render_template('admin_dashboard.html', appointments=None, clients=None, selected_date=None, selected_property=None, properties=properties)
-
 
 if __name__ == '__main__':
     with app.app_context():

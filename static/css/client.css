@@ -174,3 +174,35 @@ h6 {
     max-width: 100%;
     margin: 0;
 }
+
+/* ----------------------------- Sell Property ---------------------------- */
+
+#sell-property {
+    margin: 5% 20%;
+    color: #323644;
+  }
+  
+  #property_description {
+    width: 50%;
+    height: 150px;
+    box-sizing: border-box;
+    background-color: #f8f8f8;
+    resize: none;
+    font-weight: 400;
+  }
+  
+  .sell-form label {
+    color: #323644;
+    font-size: 1vw;
+    font-weight: 700;
+  }
+  
+  .property-btn {
+    background-color: transparent;
+    color: #323644;
+    border: solid #323644;
+    padding: 0.4vw 2.2vw;
+    font-size: 1vw;
+    font-weight: 800;
+  }
+  

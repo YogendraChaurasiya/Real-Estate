@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <!-- Add your CSS file link here -->
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+    <form action="{{ url_for('admin_dashboard') }}" method="POST">
+        <label for="date">Select Date:</label>
+        <input type="date" id="date" name="date" required>
+        <label for="property_name">Select Property Name:</label>
+        <select id="property_name" name="property_name">
+            {% for property in properties %}
+                <option value="{{ property.property_name }}">{{ property.property_name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" name="submit_type" value="appointments">Get Appointments</button>
+    </form>
+    <form action="{{ url_for('admin_dashboard') }}" method="POST">
+        <label for="property_name_clients">Select Property Name:</label>
+        <select id="property_name_clients" name="property_name">
+            {% for property in properties %}
+                <option value="{{ property.property_name }}">{{ property.property_name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" name="submit_type" value="clients">Get Clients</button>
+    </form>
+    {% if selected_date %}
+        <h2>Appointments for {{ selected_date }}</h2>
+        {% if appointments %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Property ID</th>
+                        <th>Property Name</th>
+                        <th>Property Address</th>
+                        <th>Appointment Time</th>
+                        <!-- Add more table headers as needed -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appointment, property in appointments %}
+                        <tr>
+                            <td>{{ property.id }}</td>
+                            <td>{{ property.property_name }}</td>
+                            <td>{{ property.address }}</td>
+                            <td>{{ appointment.appointment_time }}</td>
+                            <!-- Add more table cells for additional appointment details -->
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No appointments scheduled for this date and property.</p>
+        {% endif %}
+    {% endif %}
+    {% if selected_property %}
+        <h2>Clients who booked {{ selected_property }}</h2>
+        {% if clients %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Client Name</th>
+                        <th>Client Email</th>
+                        <!-- Add more table headers as needed -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for client in clients %}
+                        <tr>
+                            <td>{{ client.name }}</td>
+                            <td>{{ client.email }}</td>
+                            <!-- Add more table cells for additional client details -->
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No clients found for this property.</p>
+        {% endif %}
+    {% endif %}
+</body>
+</html>

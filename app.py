@@ -774,6 +774,69 @@ def owner_page():
 #     ]
 #     return render_template('admin.html', queries=queries)
 
+@app.route('/admin_login', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        
+        # Check if the provided username and password match the fixed admin credentials
+        if username == 'admin' and password == '123':
+            # For demonstration purposes, I'm using fixed credentials.
+            # In practice, you should securely store and compare passwords.
+            
+            # Store admin id in session after successful login
+            session['admin_id'] = 1  # You can set any unique identifier for the admin
+            return redirect(url_for('admin_dashboard'))
+        else:
+            flash("Incorrect username or password.")
+            return redirect(url_for('admin_login'))
+    return render_template('admin_login.html')
+
+# Define a route for the admin dashboard
+from flask import request
+
+@app.route('/admin_dashboard', methods=['GET', 'POST'])
+def admin_dashboard():
+    # Check if admin is logged in
+    if 'admin_id' not in session:
+        return redirect(url_for('admin_login'))
+    
+    properties = Property.query.all()
+
+    if request.method == 'POST':
+        # Check if the form submitted is for appointments or clients
+        if 'submit_type' in request.form:
+            submit_type = request.form['submit_type']
+            if submit_type == 'appointments':
+                # Get the date and property name input from the form for appointments
+                date = request.form['date']
+                property_name = request.form['property_name']
+                
+                # Query the database to fetch all appointments for the input date and property name
+                appointments = db.session.query(Appointment, Property).join(Property).filter(Appointment.appointment_date == date, Property.property_name == property_name).all()
+                
+                return render_template('admin_dashboard.html', appointments=appointments, selected_date=date, properties=properties)
+            elif submit_type == 'clients':
+                # Get the property name selected by the admin for clients
+                property_name = request.form['property_name']
+                
+                # Query the database to fetch all clients who booked the selected property
+                property_id = Property.query.filter_by(property_name=property_name).first().id
+                booked_clients = PropertyBooked.query.filter_by(pid=property_id).all()
+                
+                # Extract client ids
+                client_ids = [booked_client.cid for booked_client in booked_clients]
+                
+                # Query the database to fetch client details
+                clients = Client.query.filter(Client.id.in_(client_ids)).all()
+                
+                return render_template('admin_dashboard.html', clients=clients, selected_property=property_name, properties=properties)
+
+    # If it's a GET request or no form is submitted yet, render the admin dashboard template
+    return render_template('admin_dashboard.html', appointments=None, clients=None, selected_date=None, selected_property=None, properties=properties)
+
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()

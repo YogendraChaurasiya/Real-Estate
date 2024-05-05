@@ -774,6 +774,7 @@ def admin_dashboard():
         return redirect(url_for('admin_login'))
     
     properties = Property.query.all()
+    clients = Client.query.all() if Client.query.all() else []
 
     if request.method == 'POST':
         # Check if the form submitted is for appointments or clients
@@ -814,9 +815,17 @@ def admin_dashboard():
                 filtered_appointments = db.session.query(Appointment, Property).join(Property).filter(Appointment.appointment_date >= start_date).all()
                 
                 return render_template('admin_dashboard.html', filtered_appointments=filtered_appointments, num_days=num_days, properties=properties)
-
+            elif submit_type == 'client_properties':
+                # Get the selected client's name from the form
+                selected_client_name = request.form['client_name']
+                
+                # Query the database to fetch purchased property for the selected client
+                purchased_property = db.session.query(Property).join(PropertyBooked).join(Client).filter(Client.name == selected_client_name).all()
+                
+                return render_template('admin_dashboard.html', purchased_property=purchased_property, selected_client=selected_client_name, clients=clients, properties=properties)
+    
     # If it's a GET request or no form is submitted yet, render the admin dashboard template
-    return render_template('admin_dashboard.html', appointments=None, clients=None, selected_date=None, selected_property=None, properties=properties)
+    return render_template('admin_dashboard.html', purchased_property=None, selected_client=None, clients=clients, properties=properties)
 
 
 # @app.route('/admin')

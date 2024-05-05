@@ -1,0 +1,176 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Montserrat-black", sans-serif;
+    text-align: center;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: "Montserrat", sans-serif;
+}
+
+/* ----------------------------- Navbar ---------------------------- */
+
+.navbar {
+    padding: 15px 0;
+    display: flex;
+    justify-content: space-between;
+    background-color: #323644;
+    font-weight: bold;
+}
+
+.nav-brand {
+    font-family: "Ubuntu", sans-serif;
+    font-size: 1.5rem;
+    line-height: 0.8;
+    margin-left: -20%;
+    color: #9396a2;
+    text-decoration: none;
+}
+
+.nav-items {
+    list-style-type: none;
+    display: flex; /* Display items horizontally */
+    margin-right: 20%;
+    align-items: flex-start; /* Align items to the start */
+}
+
+.nav-items li {
+    margin-right: 33px;
+    padding: 10px 0;
+}
+
+.nav-items li:last-child {
+    margin-right: 0;
+}
+
+.nav-items a {
+    color: #9396a2;
+    text-decoration: none;
+}
+
+.sell-property {
+    margin-left: auto;
+}
+
+.navbar img {
+    margin-left: 20%;
+    margin-right: 0;
+    width: auto;
+    padding: 0;
+}
+
+/* ----------------------------- Profile ---------------------------- */
+
+.profile-container {
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 20px;
+    background-color: #323644;
+    color: #9396a2;
+    padding: 50px 0;
+}
+
+.profile-image img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+}
+
+.profile-details p {
+    /* font-size: medium; */
+    line-height: 1.6;
+    text-align: left;
+    font-size: 15px;
+    font-weight: bold;
+}
+/* ----------------------------- Left Section ---------------------------- */
+
+.left-section {
+    position: fixed; /* Fix the left section */
+    top: 0;
+    left: 0;
+    height: 100%; /* Cover full height */
+    width: 20%;
+    background-color: #323644;
+    padding: 20px;
+    overflow-y: auto; /* Enable vertical scrolling for the left section */
+}
+
+.left-section .nav-links {
+    margin-top: 30px;
+    list-style-type: none; /* Remove bullets */
+}
+
+.left-section .nav-links li {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.left-section .nav-links a {
+    color: #9396a2;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.left-section .nav-links a:hover {
+    color: #9396a2;
+}
+
+/* ----------------------------- Right Section ---------------------------- */
+
+.right-section {
+    margin-left: 20%; /* Adjust for the fixed left section */
+    width: 80%;
+    padding: 20px;
+    background-color: #fff;
+    overflow-y: auto; /* Enable vertical scrolling for the right section */
+}
+
+.right-section h2 {
+    font-weight: bolder;
+    margin-bottom: 20px;
+}
+
+.right-section .scheduled,
+.right-section .owned-property-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: flex-start;
+}
+
+.right-section .property,
+.right-section .owned-property {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.right-section .property img,
+.right-section .owned-property img {
+    width: 100%;
+    max-width: 430px;
+    height: auto;
+    /* border-radius: 10px; */
+}
+
+.right-section .property-details,
+.right-section .owned-property-details {
+    text-align: left;
+    padding: 10px 0;
+    max-width: 100%;
+    margin: 0;
+}

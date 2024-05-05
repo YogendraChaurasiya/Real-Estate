@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index_css.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/client.css') }}" />
     <!--Google Font-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,84 +23,137 @@
     <title>Client Page</title>
 </head>
 <body>
-    <h1>Welcome, {{ client.name }}</h1>
-
-    <h2>Your Information:</h2>
-    <ul>
-        <li>Name: {{ client.name }}</li>
-        <li>Email: {{ client.email }}</li>
-        <li>Phone: {{ client.phone }}</li>
-    </ul>
-
-    <h2>Your Scheduled Appointments:</h2>
-<ul>
-    {% for appointment, property, property_booking in appointments %}
-    <li>
-        
-        <!-- <strong>Property Details:</strong><br> -->
-        {% if property %}
-            {% for i in range(1, 5) %}
-                {% set image_attr = 'image' ~ i %}
-                {% if getattr(property, image_attr) %}
-                    <img src="{{ getattr(property, image_attr) }}" alt="Property Image"><br>
+    <header>
+        <nav class="navbar">
+            <img src="{{url_for('static', filename='/images/logo.png')}}" alt="Logo" height="50rem" width="25rem" / >
+            <a href="/" class="nav-brand">COLTON <br> PROPERTIES</a>
+            <ul class="nav-items">
+                <li><a href="/">HOME</a></li>
+                <li><a href="/properties">PROPERTIES</a></li>
+                <!-- <li><a href="#testimonials">Testimonials</a></li> -->
+                <li><a href="#footer">CONTACT</a></li>
+                {% if 'user_id' in session %}
+                <li><a href="/logout">LOGOUT</a></li>
+                {% else %}
+                <li><a href="/client_login">LOGIN</a></li>
                 {% endif %}
-            {% endfor %}
-            <strong>Property Name:</strong> {{ property.property_name }}<br>
-            <strong>Property Address:</strong> {{ property.address }}<br>
-            <strong>Property Description:</strong> {{ property.property_description }}<br>
-            <strong>Property Type:</strong> {{ property.property_type }}<br>
-            <strong>Price:</strong> {{ property.price }}<br>
-            <strong>Appointment Date:</strong> {{ appointment.appointment_date }}<br>
-            <strong>Appointment Time:</strong> {{ appointment.appointment_time }}<br>
-            {% if property_booking %}
-                <strong>Booking Status:</strong> Booked<br>
-                <strong>Booking Date:</strong> {{ property_booking.booked_date }}<br>
-            {% else %}
-                <strong>Booking Status:</strong> Not Booked<br>
-            {% endif %}
-            
-            
-        {% endif %}
-    </li>
-    {% endfor %}
-</ul>
-    <!-- JavaScript to hide "Your Owned Properties" section if no properties are owned -->
-    <h2 id="ownedPropertiesTitle">Your Owned Properties:</h2>
-    <ul id="ownedPropertiesList">
-        <ul>
-            {% for owned_property in owned_properties %}
-            <li>
-                {% for i in range(1, 5) %}
-                    {% set image_attr = 'image' ~ i %}
-                    {% if owned_property[image_attr] %}
-                        <img src="{{ owned_property[image_attr] }}" alt="Property Image">
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Left Section: Client Info and Links -->
+        <div class="left-section" style="float: left; width: 20%;">
+            <div class="profile-container">
+                <div class="profile-image">
+                    {% if client.photo %}
+                        <img src="{{ url_for('static', filename='/images/user.png') }}" alt="Profile Image">
+                    {% else %}
+                        <p>No profile photo available</p>
                     {% endif %}
-                {% endfor %}
-                Property Name: {{ owned_property.property_name }}<br>
-                Property Address: {{ owned_property.address }}<br>
-                Property Type: {{ owned_property.property_type }}<br>
-                Price: {{ owned_property.price }}<br>
-                
-            </li>
-            {% endfor %}
-        </ul>
-    </ul>
+                </div>
+                <div class="profile-details">
+                    <p>{{ client.name }}</p>
+                    <p>Email: {{ client.email }}</p>
+                    <p>Phone: {{ client.phone }}</p>
+                </div>
+                <div class="nav-links">
+                    <li><a href="#scheduledProperty">Scheduled Appointments</a></li>
+                    <li><a href="#ownedProperties">Owned Properties</a></li>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- Right Section: Display Area -->
+        <div class="right-section" style="float: left; width: 80%;">
+            <div id="scheduledProperty" style="display: block;">
+                <!-- Display scheduled appointments here -->
+                <h2 class="text-center mb-5" style="font-weight: bolder;">Your Scheduled Appointments</h2>
+                <div class="scheduled">
+                    {% for appointment, property, property_booking in appointments %}
+                    <div class="property" align="center">
+                        {% if property %}
+                        <a href="/property/{{ property.id }}" id="view-details" style="text-decoration: none; color: #323644;">
+                            {% for i in range(1, 5) %}
+                                {% set image_attr = 'image' ~ i %}
+                                {% if getattr(property, image_attr) %}
+                                    <img src="{{ getattr(property, image_attr) }}" alt="Property Image" height="254px" width="260px">
+                                {% endif %}
+                            {% endfor %}</a> <br>
+                    </div>
+                    <div class="property-details" style="padding: 10px 0 30px; text-align: left;">
+                            <h3 style="font-weight: bolder;"><a href="/property/{{ property.id }}" id="view-details" style="text-decoration: none; color: #323644;">{{ property.property_name }}</a></h3>
+                            <strong>Property Address:</strong> {{ property.address }}<br>
+                            <!-- <strong>Property Description:</strong> {{ property.property_description }}<br> -->
+                            <strong>Property Type:</strong> {{ property.property_type }}<br>
+                            <strong>Price:</strong> {{ property.price }}<br>
+                            <strong>Appointment Date:</strong> {{ appointment.appointment_date }}<br>
+                            <strong>Appointment Time:</strong> {{ appointment.appointment_time }}<br>
+                            {% if property_booking %}
+                                <strong>Booking Status:</strong> Booked<br>
+                                <strong>Booking Date:</strong> {{ property_booking.booked_date }}<br>
+                            {% else %}
+                                <strong>Booking Status:</strong> Not Booked<br>
+                            {% endif %}   
+                        {% endif %}
+                    </div> 
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div id="ownedProperties" style="display: none;">
+                <!-- Display owned properties here -->
+                <h2 class="text-center mb-5" style="font-weight: bolder;">Your Owned Properties</h2>
+                <div class="owned-property-list scheduled" style="margin-bottom: 20px;">
+                    {% for owned_property in owned_properties %}
+                    <div class="owned-property">
+                        {% for i in range(1, 5) %}
+                            {% set image_attr = 'image' ~ i %}
+                            {% if owned_property[image_attr] %}
+                                <img src="{{ owned_property[image_attr] }}" alt="Property Image" height="254px" width="260px">
+                            {% endif %}
+                        {% endfor %} <br>
+                    </div>
+                    <div class="owned-property-details">
+                        <h3 style="font-weight: bolder;">{{ owned_property.property_name }}</h3>
+                        <strong>Property Address:</strong> {{ owned_property.address }}<br>
+                        <strong>Property Type:</strong> {{ owned_property.property_type }}<br>
+                        <strong>Price:</strong> {{ owned_property.price }}<br>     
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // Get the number of owned properties
-        var numOwnedProperties = {{ owned_properties | length }};
+        document.addEventListener("DOMContentLoaded", function() {
+    // Get references to the scheduled appointments and owned properties sections
+    var scheduledPropertySection = document.getElementById("scheduledProperty");
+    var ownedPropertiesSection = document.getElementById("ownedProperties");
 
-        // Check if the client owns any properties
-        if (numOwnedProperties === 0) {
-            // Hide the "Your Owned Properties" section
-            document.getElementById("ownedPropertiesTitle").style.display = "none";
-            document.getElementById("ownedPropertiesList").style.display = "none";
-            
-            // Display message indicating no owned properties
-            var noOwnedPropertiesMessage = document.createElement("h2");
-            noOwnedPropertiesMessage.textContent = "You do not own any property";
-            document.body.appendChild(noOwnedPropertiesMessage);
-        }
+    // Get references to the links to toggle between sections
+    var scheduledLink = document.querySelector("a[href='#scheduledProperty']");
+    var ownedLink = document.querySelector("a[href='#ownedProperties']");
+
+    // Initially hide the owned properties section
+    ownedPropertiesSection.style.display = "none";
+
+    // Add event listeners to the links to toggle between sections
+    scheduledLink.addEventListener("click", function(event) {
+        event.preventDefault(); // Prevent default link behavior
+        scheduledPropertySection.style.display = "block"; // Show scheduled appointments section
+        ownedPropertiesSection.style.display = "none"; // Hide owned properties section
+    });
+
+    ownedLink.addEventListener("click", function(event) {
+        event.preventDefault(); // Prevent default link behavior
+        scheduledPropertySection.style.display = "none"; // Hide scheduled appointments section
+        ownedPropertiesSection.style.display = "block"; // Show owned properties section
+    });
+});
+
     </script>
 </body>
 </html>

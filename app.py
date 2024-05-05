@@ -542,6 +542,9 @@ def client_page():
     client_id = session['user_id']
     client = Client.query.get(client_id)
 
+    # Fetch client's photo path
+    client_photo = client.photo if client.photo else None
+
     # Fetch client's scheduled appointments    
     # Join Appointment, Property, and PropertyBooked tables
     appointments = db.session.query(Appointment, Property, PropertyBooked).\
@@ -556,8 +559,9 @@ def client_page():
     owned_properties = SoldProperty.query.filter_by(current_owner=client.name).all()
 
     # Render the client page template with the fetched data
-    return render_template('client_page.html', client=client, appointments=appointments,
+    return render_template('client_page.html', client=client, client_photo=client_photo, appointments=appointments,
                            booked_properties=booked_properties, owned_properties=owned_properties)
+
 
 @app.route('/owner_page')
 def owner_page():
